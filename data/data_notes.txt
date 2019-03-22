@@ -1,0 +1,10 @@
+# eda overview
+
+alsfrs.csv
+
+ALSFRA_Total
+total scores runs from 0 to 44
+lots of multi-correlated factors...which i guess makes sense.
+
+
+
