@@ -3,7 +3,8 @@
 alsfrs.csv
 
 ALSFRA_Total
-total scores runs from 0 to 44
+total scores runs from 0 to 48 - revised
+total scores runs from 0 to 44 - original
 lots of multi-correlated factors...which i guess makes sense.
 
 
