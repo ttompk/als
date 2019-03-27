@@ -56,7 +56,7 @@ def lm_plot(predicted, y_train, sample_n=None, height = 3, width = 6):
     # end function
     
     
-def resid_plot(predicted, residuals, sample_n=None, height=2, width=4):    
+def resid_plot(predicted, resid, sample_n=None, height=2, width=4):    
     '''
     This plot shows if residuals have non-linear patterns. There could be a non-linear 
     relationship between predictor variables and an outcome variable and the pattern 
@@ -74,16 +74,16 @@ def resid_plot(predicted, residuals, sample_n=None, height=2, width=4):
         if len(predicted) > sample_n: 
             i = np.random.choice(len(predicted), sample_n, replace=False)
             predicted = predicted[i]
-            residuals = residuals[i]
+            resid = resid[i]
     
     ## residual plot - x = predicted vs y = observed - actual
     plot_lm_r = plt.figure(1)
     plot_lm_r.set_figheight(height)
     plot_lm_r.set_figwidth(width)
-    plot_lm_r.axes[0] = sns.residplot(predicted, residuals, lowess=True, scatter_kws={'alpha':0.5}, line_kws={'color': 'red', 'lw': 2})
+    plot_lm_r.axes[0] = sns.residplot(predicted, resid, lowess=True, scatter_kws={'alpha':0.5}, line_kws={'color': 'red', 'lw': 2})
     plot_lm_r.axes[0].set_title('Predicted vs Residuals')
     plot_lm_r.axes[0].set_xlabel('Predicted Values')
-    plot_lm_r.axes[0].set_ylabel('SalesPrice Model Residuals (obs - pred)')
+    plot_lm_r.axes[0].set_ylabel('Model Residuals (obs - pred)')
     plt.show()
     # end function
     
