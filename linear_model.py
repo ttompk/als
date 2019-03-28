@@ -169,6 +169,7 @@ class LinearModel():
         self.predicted = self.model.predict(self.X_train).flatten()
         self.resid = self.predicted - self.y_train
         self.resid_norm = (self.resid - self.resid.mean()) / self.resid.std()
+        #self.mse
         self.rmse = np.sqrt(mean_squared_error(self.y_train, self.predicted))
         self.rmse_log = np.sqrt(((( np.log(self.predicted+1)-np.log(self.y_train + 1) )**2).sum() ) / len(self.y_train))
         self.coef = self.model.coef_
