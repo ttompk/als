@@ -36,15 +36,15 @@ class Linear_Model():
             
             
         params 
-            gboost = {'loss': ’ls’, 'learning_rate': 0.1, 'n_estimators'= 100, 
+            gboost = {'loss': 'ls', 'learning_rate': 0.1, 'n_estimators'= 100, 
                       'subsample'=1.0, 'criterion'=’friedman_mse’, 'min_samples_split'=2,
                       'min_samples_leaf'=1, 'min_weight_fraction_leaf'=0.0, 
                       'max_depth'=3, 'min_impurity_decrease'=0.0, 
                       'min_impurity_split'=None, 'init'=None, 'random_state'=None,
                       'max_features'=None, 'alpha'=0.9, 'verbose'=0, 
-                      'max_leaf_nodes'=None, 'warm_start'=False, 'presort'=’auto’,
+                      'max_leaf_nodes'=None, 'warm_start'=False, 'presort'='auto',
                       'validation_fraction'=0.1, 'n_iter_no_change'=None, 'tol'=0.0001' }
-            random = {'n_estimators'=’warn’, criterion=’mse’, max_depth=None, 
+            random = {'n_estimators'='warn', criterion='mse', max_depth=None, 
                       'min_samples_split'=2, 'min_samples_leaf'=1, 
                       'min_weight_fraction_leaf'=0.0, 'max_features'=’auto’, 
                       'max_leaf_nodes'=None, 'min_impurity_decrease'=0.0, 
@@ -100,6 +100,8 @@ class Linear_Model():
             self.linear_pred()
         elif self.model_type == "random":
             self.random_pred()
+        elif self.model_type == "gboost":
+            self.gboost_pred()
         else:
             print("There is something wrong with your model selection. Chose 'linear', 'lasso', or 'ridge'")
         
@@ -188,7 +190,7 @@ class Linear_Model():
         """
         # enter cross-validation function.
         self.model = RandomForestRegressor(**self.params)
-        self.model.fit(self.X_train,self.y_train)
+        self.model.fit(self.X_train,self.y_train.flatten())
         # end function
 
         
@@ -220,21 +222,24 @@ class Linear_Model():
         '''
         determines the model fit metrics and saves them to the class object
         '''
-        self.y_train = self.y_train.flatten()
-        self.predicted = self.model.predict(self.X_train).flatten()
-        self.resid = self.predicted - self.y_train
-        self.resid_norm = (self.resid - self.resid.mean()) / self.resid.std()
-        self.rmse = np.sqrt(mean_squared_error(self.y_train, self.predicted))
-        self.rmse_log = np.sqrt(((( np.log(self.predicted+1)-np.log(self.y_train + 1) )**2).sum() ) / len(self.y_train))
-        self.coef = self.model.coef_
-        self.intercept = self.model.intercept_
-        self.r2 = r2_score(self.y_train, self.predicted)
-        self.r2_adj = 1 - (1-self.r2)*(len(self.y_train)-1)/(len(self.y_train)-self.X_train.shape[1]-1)
-        self.score = self.model.score(self.X_test, self.y_test)
+        if self.model_type == "random" or self.model_type == "gboost":
+            self.score = self.model.score(self.X_test, self.y_test)
+        else:
+            self.y_train = self.y_train.flatten()
+            self.predicted = self.model.predict(self.X_train).flatten()
+            self.resid = self.predicted - self.y_train
+            self.resid_norm = (self.resid - self.resid.mean()) / self.resid.std()
+            self.rmse = np.sqrt(mean_squared_error(self.y_train, self.predicted))
+            self.rmse_log = np.sqrt(((( np.log(self.predicted+1)-np.log(self.y_train + 1) )**2).sum() ) / len(self.y_train))
+            self.coef = self.model.coef_
+            self.intercept = self.model.intercept_
+            self.r2 = r2_score(self.y_train, self.predicted)
+            self.r2_adj = 1 - (1-self.r2)*(len(self.y_train)-1)/(len(self.y_train)-self.X_train.shape[1]-1)
+            self.score = self.model.score(self.X_test, self.y_test)
 
-        if self.X_test is not None:
-            self.test_pred = self.model.predict(self.X_test)
+            if self.X_test is not None:
+                self.test_pred = self.model.predict(self.X_test)
 
-        if self.cv > 1:
-            self.cv_score = (cross_val_score(self.model, self.X_train, self.y_train, cv = self.cv)).mean()
+            if self.cv > 1:
+                self.cv_score = (cross_val_score(self.model, self.X_train, self.y_train, cv = self.cv)).mean()
         # end function
