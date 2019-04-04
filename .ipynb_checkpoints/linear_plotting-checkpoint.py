@@ -67,7 +67,7 @@ def resid_plot(predicted, resid, sample_n=None, height=2, width=4):
     A good model's data are simulated in a way that meets the regression assumptions very well, 
     while a bad model's data are not.
     '''
-    plt.style.use('seaborn')
+    #plt.style.use('seaborn')
     
     # if sampling value turned on then limit data in the output
     if sample_n != None:
