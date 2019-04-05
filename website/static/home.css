@@ -1,0 +1,83 @@
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 480px) {
+/* Styles */
+}
+
+body {
+    font-family: 'Verdana';
+    color: #1C2833;
+    background-color: #34495E;
+    
+}
+
+li {
+    font-family: monospace;
+}
+
+h1 {
+    color: white;
+    vertical-align: top;
+    font-style: normal;
+    position: relative;
+    text-align: left;
+    left: 16px;
+    background-color: #34495E ;
+    border: 1px gray;
+    margin: 10px;
+    padding: 10px;
+}
+img {
+    height: 300px;
+    width: 300px;   
+}
+/*
+#banner_img {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+*/
+
+#controls {
+    background-color: white;
+    border: 1px gray;
+    margin: 15px;
+    padding: 15px;
+}
+
+
+button{
+    width: 200px;
+    height: 30px;
+    vertical-align: text-bottom;
+}
+
+label {
+    display: inline-block;
+    width: 200px;
+}
+
+input {
+    background-color: white;
+    border: 1px solid #2C3E50;
+    width: 200px;
+    ;
+}
+
+#inference-button {
+    background-color: yellow;
+    border: 1px solid gray;
+    margin: 10px;
+    padding: 10px;
+}
+
+#inference {
+
+    margin: 10px;
+    padding: 10px;
+}
+
