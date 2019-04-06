@@ -33,9 +33,9 @@ onset_loc_detail = MultiSelect(title="Location Detail (can pick multiple)", valu
 dumbdiv = Div()
 
 ## ALSFRS panels
-dt_alsfrs_1=DatePicker(title='Date of 1st ALSFRS: ', 
-                                       min_date=date(1990,1,1),
-                                       max_date=date.today())
+dt_alsfrs_1=DatePicker(title='Date of Test: ', 
+                       min_date=date(1990,1,1),
+                       max_date=date.today(), width=150)
 dt_alsfrs_2=DatePicker(title='Date of 2nd ALSFRS: ', 
                                        min_date=date(1990,1,1),
                                        max_date=date.today())
@@ -52,111 +52,103 @@ dt_alsfrs_6=DatePicker(title='Date of 6th ALSFRS: ',
                                        min_date=date(1990,1,1),
                                        max_date=date.today())
 
-Q1_1 = TextInput(value="default", title="Q1:")
-Q1_2 = TextInput(value="default", title="Label:")
-Q1_3 = TextInput(value="default", title="Label:")
-Q1_4 = TextInput(value="default", title="Label:")
-Q1_5 = TextInput(value="default", title="Label:")
-Q1_6 = TextInput(value="default", title="Label:")
+Q1_1 = TextInput(value="", title="Q1:")
+Q1_2 = TextInput(value="default", title="Label:", width=20)
+Q1_3 = TextInput(value="default", title="Label:", width=20)
+Q1_4 = TextInput(value="default", title="Label:", width=20)
+Q1_5 = TextInput(value="default", title="Label:", width=20)
+Q1_6 = TextInput(value="default", title="Label:", width=20)
 
-Q2_1 = TextInput(value="default", title="Q2:")
+Q2_1 = TextInput(value="", title="Q2:")
 Q2_2 = TextInput(value="default", title="Label:")
 Q2_3 = TextInput(value="default", title="Label:")
 Q2_4 = TextInput(value="default", title="Label:")
 Q2_5 = TextInput(value="default", title="Label:")
 Q2_6 = TextInput(value="default", title="Label:")
 
-Q3_1 = TextInput(value="default", title="Q3:")
+Q3_1 = TextInput(value="", title="Q3:")
 Q3_2 = TextInput(value="default", title="Label:")
 Q3_3 = TextInput(value="default", title="Label:")
 Q3_4 = TextInput(value="default", title="Label:")
 Q3_5 = TextInput(value="default", title="Label:")
 Q3_6 = TextInput(value="default", title="Label:")
 
-Q4_1 = TextInput(value="default", title="Q4:")
+Q4_1 = TextInput(value="", title="Q4:")
 Q4_2 = TextInput(value="default", title="Label:")
 Q4_3 = TextInput(value="default", title="Label:")
 Q4_4 = TextInput(value="default", title="Label:")
 Q4_5 = TextInput(value="default", title="Label:")
 Q4_6 = TextInput(value="default", title="Label:")
 
-Q5_1 = TextInput(value="default", title="Q5:")
+Q5_1 = TextInput(value="", title="Q5:")
 Q5_2 = TextInput(value="default", title="Label:")
 Q5_3 = TextInput(value="default", title="Label:")
 Q5_4 = TextInput(value="default", title="Label:")
 Q5_5 = TextInput(value="default", title="Label:")
 Q5_6 = TextInput(value="default", title="Label:")
 
-Q6_1 = TextInput(value="default", title="Q6:")
+Q6_1 = TextInput(value="", title="Q6:")
 Q6_2 = TextInput(value="default", title="Label:")
 Q6_3 = TextInput(value="default", title="Label:")
 Q6_4 = TextInput(value="default", title="Label:")
 Q6_5 = TextInput(value="default", title="Label:")
 Q6_6 = TextInput(value="default", title="Label:")
 
-Q7_1 = TextInput(value="default", title="Label:")
+Q7_1 = TextInput(value="", title="Label:")
 Q7_2 = TextInput(value="default", title="Label:")
 Q7_3 = TextInput(value="default", title="Label:")
 Q7_4 = TextInput(value="default", title="Label:")
 Q7_5 = TextInput(value="default", title="Label:")
 Q7_6 = TextInput(value="default", title="Label:")
 
-Q8_1 = TextInput(value="default", title="Label:")
+Q8_1 = TextInput(value="", title="Label:")
 Q8_2 = TextInput(value="default", title="Label:")
 Q8_3 = TextInput(value="default", title="Label:")
 Q8_4 = TextInput(value="default", title="Label:")
 Q8_5 = TextInput(value="default", title="Label:")
 Q8_6 = TextInput(value="default", title="Label:")
 
-Q9_1 = TextInput(value="default", title="Label:")
+Q9_1 = TextInput(value="", title="Label:")
 Q9_2 = TextInput(value="default", title="Label:")
 Q9_3 = TextInput(value="default", title="Label:")
 Q9_4 = TextInput(value="default", title="Label:")
 Q9_5 = TextInput(value="default", title="Label:")
 Q9_6 = TextInput(value="default", title="Label:")
 
-Q10_1 = TextInput(value="default", title="Label:")
+Q10_1 = TextInput(value="", title="Label:")
 Q10_2 = TextInput(value="default", title="Label:")
 Q10_3 = TextInput(value="default", title="Label:")
 Q10_4 = TextInput(value="default", title="Label:")
 Q10_5 = TextInput(value="default", title="Label:")
 Q10_6 = TextInput(value="default", title="Label:")
 
-R1_1 = TextInput(value="default", title="Label:")
+R1_1 = TextInput(value="", title="Label:")
 R1_2 = TextInput(value="default", title="Label:")
 R1_3 = TextInput(value="default", title="Label:")
 R1_4 = TextInput(value="default", title="Label:")
 R1_5 = TextInput(value="default", title="Label:")
 R1_6 = TextInput(value="default", title="Label:")
 
-R2_1 = TextInput(value="default", title="Label:")
+R2_1 = TextInput(value="", title="Label:")
 R2_2 = TextInput(value="default", title="Label:")
 R2_3 = TextInput(value="default", title="Label:")
 R2_4 = TextInput(value="default", title="Label:")
 R2_5 = TextInput(value="default", title="Label:")
 R2_6 = TextInput(value="default", title="Label:")
 
-R3_1 = TextInput(value="default", title="Label:")
+R3_1 = TextInput(value="", title="Label:")
 R3_2 = TextInput(value="default", title="Label:")
 R3_3 = TextInput(value="default", title="Label:")
 R3_4 = TextInput(value="default", title="Label:")
 R3_5 = TextInput(value="default", title="Label:")
 R3_6 = TextInput(value="default", title="Label:")
 
+#l = layout([ [bollinger],[sliders, plot],[p1, p2, p3],], sizing_mode='scale_width')
 
-l2 = layout([Q1_1, Q2_1 ], sizing_mode='fixed')
-l3 = layout([Q1_1, Q2_1 ], sizing_mode='fixed')
-l4 = layout([Q1_1, Q2_1 ], sizing_mode='fixed')
-l5 = layout([Q1_1, Q2_1 ], sizing_mode='fixed')
-l6 = layout([Q1_1, Q2_1 ], sizing_mode='fixed')
-
-
-l1 = layout(row(widgetbox(dt_alsfrs_1, width=100),
-                widgetbox(Q1_1, Q2_1, Q3_1, Q4_1, width=100),
-             widgetbox(Q5_1, Q6_1, Q7_1, Q8_1, width=100), 
-             widgetbox(Q9_1, Q10_1, R1_1, width=100),
-             widgetbox(R2_1, R3_1, width=100)), sizing_mode='fixed')
-
+l1 = layout([dt_alsfrs_1],[Q1_1, Q2_1, Q3_1, Q4_1], [Q5_1, Q6_1], [Q7_1, Q8_1], sizing_mode='fixed',
+           width=)
+                 #widgetbox(Q9_1, Q10_1, R1_1)
+                 #widgetbox(R2_1, R3_1))),, sizing_mode='fixed')
 l2 = layout([[widgetbox(dt_alsfrs_2, width=100)], Q1_2, Q2_2, Q3_2, Q4_2, Q5_2, Q6_2, Q7_2,
             Q8_2, Q9_2, Q10_2, R1_2, R2_2, R3_2], sizing_mode='fixed')
 
@@ -214,5 +206,10 @@ grid = gridplot([[p1, p2], [None, p3]])
 # show the results
 dt_alsfrs_1.on_change('value',callback)
 #curdoc().add_root(bokehcol(dt_pckr_strt))
-show(layout(row(widgetbox(p,subject_id,date_onset, onset_loc, onset_loc_detail, width=200),grid), tabs))
+
+show(layout(
+    row(widgetbox(
+        p,subject_id,date_onset, onset_loc, onset_loc_detail, width=200),
+        tabs), 
+     grid ))
 
