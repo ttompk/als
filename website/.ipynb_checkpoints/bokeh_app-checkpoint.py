@@ -23,8 +23,8 @@ desc = Div(text=open(join(dirname(__file__), "description.html")).read(), width=
 dt_date_onset=DatePicker(title="Date of ALS Onset", 
                                        min_date=date(1990,1,1),
                                        max_date=date.today())
-subject_id = TextInput(title="Subject ID:", value="default")
-#date_onset = TextInput(title="Date of ALS Onset", value="default")
+subject_id = TextInput(title="Subject ID:", value="ref number")
+age_onset = TextInput(title="Age at ALS Onset", value="years")
 onset_loc_detail = MultiSelect(title="Location Detail (can pick multiple)", value=["unk"],
                            options=[("unk", "unknown"),("hands", "Hands"), 
                                     ("arms", "Arms"), ("feet", "Feet"), ("legs", "Legs")])
@@ -34,15 +34,15 @@ def onset_loc_handler(new):
     print ('Radio button option ' + str(new) + ' selected.')
     
 pp_onset = Paragraph(text="""Onset Neuron Group""", width=250, height=15)
-onset_loc = RadioButtonGroup(labels=["Bulbar", "Spinal", "Both"], active=0)
+onset_loc = RadioButtonGroup(labels=["Bulbar", "Spinal", "Both", "*Unk"], active=3)
 onset_loc.on_click(onset_loc_handler)
 
 # riluzole radio button
 def riluzole_handler(new):
     print ('Radio button option ' + str(new) + ' selected.')
     
-pp_riluzole = Paragraph(text="""Subject_used_Riluzole""", width=250, height=15)
-riluzole = RadioButtonGroup(labels=["Yes", "No"], active=0)
+pp_riluzole = Paragraph(text="""Subject used Riluzole""", width=250, height=15)
+riluzole = RadioButtonGroup(labels=["Yes", "No", "*Unk"], active=2)
 riluzole.on_click(onset_loc_handler)
 
 # caucasian radio button
@@ -50,7 +50,7 @@ def caucasian_handler(new):
     print ('Radio button option ' + str(new) + ' selected.')
     
 pp_caucasian = Paragraph(text="""Race Caucasian""", width=250, height=15)
-caucasian = RadioButtonGroup(labels=["Yes", "No"], active=0) 
+caucasian = RadioButtonGroup(labels=["Yes", "No", "*Unk"], active=2) 
 caucasian.on_click(caucasian_handler)
 
 # sex radio button
@@ -58,7 +58,7 @@ def sex_handler(new):
     print ('Radio button option ' + str(new) + ' selected.')
     
 pp_sex = Paragraph(text="""Sex""", width=250, height=15)
-sex = RadioButtonGroup(labels=["Male", "Female"], active=0)
+sex = RadioButtonGroup(labels=["Male", "Female", "*Unk"], active=2)
 sex.on_click(sex_handler)
 
 
@@ -214,11 +214,9 @@ tabs = Tabs(tabs=[ tab1, tab2, tab3, tab4, tab5, tab6], width = 800)
 
 text_input = TextInput(value="default", title="this")
 
-button = Button(label="Foo", button_type="success")
-
 
 ## button to run prediction
-button = Button(label="Foo", button_type="success")
+predict_button = Button(label="Run Prediction", button_type="success")
 
 ## date things
 crnt_date=dt.now()
@@ -250,13 +248,14 @@ dt_alsfrs_1.on_change('value',callback)
 #curdoc().add_root(bokehcol(dt_pckr_strt))
 
 show(layout([desc],
-    row(widgetbox(
-        subject_id, dt_date_onset, pp_onset, 
-        onset_loc, onset_loc_detail, 
-        pp_riluzole, riluzole, 
-        pp_caucasian, caucasian,
-        pp_sex, sex,
-        width=250),
-        tabs), 
-     grid ))
+            row(widgetbox(
+                subject_id, dt_date_onset, age_onset,
+                pp_onset, 
+                onset_loc, onset_loc_detail, 
+                pp_riluzole, riluzole, 
+                pp_caucasian, caucasian,
+                pp_sex, sex,
+                width=250),
+                tabs),
+            predict_button, grid ))
 
