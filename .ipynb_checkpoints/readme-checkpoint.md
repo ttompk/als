@@ -1,10 +1,10 @@
-# Predict length of survival of ALS subjects
+# Predicting Length of Survival of ALS Subjects
 
 Amyotrophic Lateral Sclerosis - aka ALS, Lou Gehrig’s Disease, Motor Neuron Disease   
 
 ## Project Overview  
 
-Using machine learning, several predictive models were built to determine the length of time from onset of disease until death in ALS subjects. A random forest regression model was ultimately chosen as it provided the best performance. The model can predict the day of death with an abolute error of 149 days, an R-squared of 0.75, and accuracy of 83%. The model requires information from the onset of disease and functional assessments taken since onset. As a result, the model cannot predict the length of survival at the time of diagnosis alone, unless a functional assessment has been made. 
+Using machine learning, several predictive models were built to determine the length of time from onset of disease until death in ALS subjects. The final model was a random forest regression model that can predict the day of death with an abolute error of 149 days, an R-squared of 0.75, and accuracy of 83%. The model requires information about the onset of disease and functional assessments taken since onset. An interactive html tool allows a user to enter a subject's demographic and functional data and retrieve a prediction.
 
 ### ALS
 
@@ -68,3 +68,9 @@ The location data in the original dataset was messy. Most text strings contained
 ### Death
 
 Death, the target variable, was present for only those subjects whom died during a clinical trial.
+
+
+## Surpises
+
+Approximatly 90% of ALS subjects ultimatly die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival. Literature from research studies appear to support this finding. Hopefully, a better respiratory test can be developed to test respiration forces in ALS subjects which does not involve the confounding confounding factor of subject volition.
+
