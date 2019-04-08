@@ -8,7 +8,6 @@ from datetime import datetime as dt
 import pickle
 
 from bokeh.io import output_file, show, curdoc
-#from bokeh.plotting import curdoc
 from bokeh.layouts import widgetbox, row, gridplot, layout
 from bokeh.layouts import column as bokehcolumn
 from bokeh.plotting import figure
@@ -16,18 +15,62 @@ from bokeh.models.widgets import TextInput, Paragraph, Button, MultiSelect, Radi
 from bokeh.models.widgets import DatePicker, Panel, Tabs, Div, RadioButtonGroup, Button
 from bokeh.models.widgets import Select, DataTable, TableColumn
 
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, DateFormatter
 
 from bokeh.palettes import Viridis3
 
+linreg_scalers( create_alsfrs_data() )
+def linreg_scalers(df, y_col, x_col):
+    '''
+    creates linear regression slopes, intercepts for every alsfrs value in a df.
+    input:
+        df = df
+        subject_col = name of subject id column
+        y_col = name of first y data column
+        x_col = name of column with x values
+        y_label = name of y feature (for table output)
+    output:
+        regression outputs in dataframe
+    '''
+    slopes = defaultdict()
+    
+    # list of every subject in table 
+    #subjects_list = list(np.unique(df[subject_col]))
+    
+    # format df for analysis
+    df.dropna(inplace=True)
+    x=np.array(df['day_from_onset'])
+    
+    df.drop(['date','test', 'day_from_onset', 'R2', 'R3'], axis=1, inplace=True)
+    df['ALSFRS_Total'] = df.sum(axis=1)
+    
+    # for each question
+    for q in list(df.columns):
+        y = np.array(df[q].copy())
+        
+        # linregress is part of scipy.stats. 
+        slope, intercept, r_value, p_value, std_err = linregress(x, y)
+        slopes[q] = (q, slope)
 
-### load in baseline data on all modeling features or generic prediction
-baseline_source = ColumnDataSource(pd.read_csv("baseline_df.csv"))  
-# create the alsfrs 
-alsfrs_entries = {'day':[0], 'Q1':[4], 'Q2':[4], 'Q3':[4], 'Q4':[4], 'Q5':[4], 'Q6':[4], 'Q7':[4], 
-               'Q8':[4], 'Q9':[4], 'Q10':[4], 'R1':[4], 'R2':[4], 'R3':[4]}
-alsfrs_data = pd.DataFrame(alsfrs_entries)
-alsfrs_source = ColumnDataSource(alsfrs_data)
+    # format as dataframe
+    full_result = pd.DataFrame(slopes).transpose().reset_index()
+    
+    # relabel columns
+    s_label = "slope_" + y_label 
+    i_label = "intercept_" + y_label
+    full_result.rename(index=str, columns={"index": "subject_id", 
+                                      0: "test" ,1: s_label, 
+                                      2: i_label }, inplace=True)
+    
+    # make small table
+    mini_table = slope_mini_table(full_result.copy(), i_label)
+    
+    # return table
+    return mini_table
+
+
+
+    
 
 # load pickled model
 filename = 'finalized_model.sav'
@@ -38,7 +81,6 @@ output_file("prediction_ui.html")
 
 # the top of the page
 description = Div(text=open(join(dirname(__file__), "description.html")).read(), width=800)
-# End of button example  
 
 ## date things
 crnt_date=dt.now()
@@ -286,21 +328,23 @@ tab6 = Panel(child= l6, title="ALSFRS-6")
 
 tabs = Tabs(tabs=[ tab1, tab2, tab3, tab4, tab5, tab6], width = 800)
 
-'''
+
 ### alsfrs tables
 ###  make prediction button   
 def run_predict_button():
     # 
-    data = alsfrs_source.data   
-    newdata = expand_data(data)  # get the new values from the form and add to data
-    source2.data = newdata2
-    show_output = layout([pp_data_table], [data_table], [grid])
-    curdoc().add_root(show_output)
-'''
-
+    alsfrs_df = create_alsfrs_data()
+    global data_table
+    update_data = None
+    data_table.source.data.update(alsfrs_df)
+    #end function
+               
+# make df of input values
 def create_alsfrs_data():
     # collapse text box inputs into one list
     alsfrs_entries = {'test': ['onset', 'test1', 'test2', 'test3', 'test4', 'test5', 'test6'], 
+                      'date': [dt_date_onset.value, dt_alsfrs_1.value, dt_alsfrs_2.value,
+                              dt_alsfrs_3.value, dt_alsfrs_4.value, dt_alsfrs_5.value, dt_alsfrs_6.value],
                       'day_from_onset':[0, "","","","","",""], 
                       'Q1':[4, Q1_1.value, Q1_2.value, Q1_3.value, Q1_4.value, Q1_5.value, Q1_6.value], 
                       'Q2':[4, Q2_1.value, Q2_2.value, Q2_3.value, Q2_4.value, Q2_5.value, Q2_6.value],
@@ -314,33 +358,45 @@ def create_alsfrs_data():
                       'Q10_R1':[4, R1_1.value, R1_2.value, R1_3.value, R1_4.value, R1_5.value, R1_6.value],
                       'R2':[4, R2_1.value, R2_2.value, R2_3.value, R2_4.value, R2_5.value, R2_6.value],
                       'R3':[4, R3_1.value, R3_2.value, R3_3.value, R3_4.value, R3_5.value, R3_6.value]}
+    
     alsfrs_df = pd.DataFrame(alsfrs_entries)
     for c in list(alsfrs_df.columns):
         alsfrs_df[c] = alsfrs_df[c].where(alsfrs_df[c]!="", np.NaN)
         alsfrs_df[c] = alsfrs_df[c].where(alsfrs_df[c]!="(depreciated)", np.NaN)
+    
+    
+    # get the date difference
+    def days_from_onset_func(val):
+        if val==None:
+            return np.NaN
+        else:
+            return (val - dt_date_onset.value).days
+
+    alsfrs_df['day_from_onset'] = alsfrs_df['date'].apply(days_from_onset_func)
+  
+    
+
+
+
     return alsfrs_df
+
+
 # instaniate alsfrs table
 alsfrs_df = create_alsfrs_data()
 
-# run the function on start up
-#alsfrs_df = alsfrs_update_table()
-            
-'''# get the date difference
-alsfrs_date_list = [dt_alsfrs_1, dt_alsfrs_2, dt_alsfrs_3, dt_alsfrs_4, dt_alsfrs_5, dt_alsfrs_6]
-for i, test_date in enumerate(alsfrs_date_list):
-    if test_date!=None:
-        alsfrs_df['day_from_onset'].iloc[i] = (dt_date_onset.value-test_date.value).days
-'''
+### run linear regression on the alsfrs data
+#drop na
+
 
 # for data table output
-#def alsfrs_source_funt(alsfrs_df):
 alsfrs_source = ColumnDataSource(alsfrs_df)
 
 #return alsfrs_source
 #def alsfrs_source_cols():
 alsfrs_source_columns = [
         TableColumn(field="test", title="Test Number"),
-        TableColumn(field="day_from_onset", title="Days from Onset"), #formatter=DateFormatter()),
+        TableColumn(field="date", title="Date", formatter=DateFormatter(format="%m/%d/%Y")),
+        TableColumn(field="day_from_onset", title="Days from Onset"),
         TableColumn(field="Q1", title="Q1"),
         TableColumn(field="Q2", title="Q2"),
         TableColumn(field="Q3", title="Q3"),
@@ -355,17 +411,74 @@ alsfrs_source_columns = [
         TableColumn(field="R3", title="R3") ]
 
 data_table = DataTable(source=alsfrs_source, columns=alsfrs_source_columns, 
-                           width=800, height=280)
+                           width=1000, height=280)
 
 pp_data_table = Paragraph(text="""ALSFRS Data Table""", width=250, height=15)
 
 
+'''   --- Data for models ---   '''
+### create model data
+### load in baseline data on all modeling features or generic prediction
+def create_base_data()
+    base = pd.read_csv("baseline_df.csv")
+    return base
+base = create_base_data()
+baseline_source = ColumnDataSource(base)
+
+# update the baseline model with new data
+def model_data_update(base):
+    base = create_base_data()
+    if age_onset.value != "*Unk":
+        base['age_at_onset'] = age_onset.value
+    else:
+        base['age_at_onset'] =
+    
+    if riluzole.value != "*Unk":
+        base['Subject_used_Riluzole'] = riluzole.value
+    else:
+        base['Subject_used_Riluzole'] =
+    
+    if  caucasian.value != "*Unk":
+        base['Race_Caucasian'] = caucasian.value
+    else:
+        base['Race_Caucasian'] =
+    
+    if symptom.value == "Weakness":
+        base['symptom_weakness'] = 1
+    else:
+        base['symptom_weakness'] =
+    
+    if onset_loc == 'Spinal':
+        base['loc_spinal'] = 1
+    else:
+        base['loc_spinal'] =
+    
+    if onset_loc == 'Bulbar':
+        base['loc_speech_or_mouth'] = 1
+    else:
+        base['loc_speech_or_mouth'] =
+    
+    base['slope_updated_ALSFRS_Total'] = 
+    base['slope_Q1_Speech'] =
+    base['slope_Q2_Salivation'] =
+    base['slope_Q3_Swallowing'] =
+    base['slope_Q4_Handwriting'] =
+    base['slope_Q6_Dressing_and_Hygiene'] =
+    base['slope_Q7_Turning_in_Bed'] =
+    base['slope_Q8_Walking	'] =
+    base['slope_Q9_Climbing_Stairs'] =
+    base['slope_Q10_Updated'] =
+    #end function
+
+    
+    
+'''---  Prediction Button  ---'''
 ## button to run prediction
 predict_button = Button(label="Run Prediction", button_type="success")
-#predict_button.on_click(run_predict_button)
+predict_button.on_click(run_predict_button)
 
 
-
+'''---  Figures  ---'''
 ### FIGURES
 #lm example
 alsfrs_total = alsfrs_df.copy()
@@ -410,7 +523,6 @@ grid = gridplot([[p1, p2], [None, plot_slope_alsfrs]])  # can also fill in with 
 
 # put all show/hide elements in a group
 show_output = layout([pp_data_table], [data_table], [grid])
-#show_output = layout()
 
 ### Display
 curdoc().title = "ALS_Predict"
@@ -421,7 +533,4 @@ curdoc().add_root( layout([description], row(
                 width=300),
                      tabs), 
                           [predict_button], 
-                          #[pp_data_table],
-                          #[data_table], 
-                          #[grid]))
                           show_output))
