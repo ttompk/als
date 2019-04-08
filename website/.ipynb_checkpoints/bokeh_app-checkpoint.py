@@ -40,13 +40,15 @@ output_file("prediction_ui.html")
 description = Div(text=open(join(dirname(__file__), "description.html")).read(), width=800)
 # End of button example  
 
-
+## date things
+crnt_date=dt.now()
 
 ## Onset Panel
 # date onset
 def dt_date_onset_handler(attr, old, new):
-    print("Previous label: " + old)
-    print("Updated label: " + new)
+    print(type(old))
+    print(type(new))
+    print('old was {} and new is {}'.format(old,new))
 dt_date_onset=DatePicker(title="Date of ALS Onset", 
                                        min_date=date(1990,1,1),
                                        max_date=date.today())
@@ -54,14 +56,14 @@ dt_date_onset.on_change("value", dt_date_onset_handler)
 
 # subject id
 def subject_id_handler(attr, old, new):
-    print("Previous label: " + old)
+    print("Previous label: " + tpye(old))
     print("Updated label: " + new)
 subject_id = TextInput(title="Subject ID:", value="ref number")
 subject_id.on_change("value", subject_id_handler)
 
 # age at onset
 def age_onset_handler(attr, old, new):
-    print("Previous label: " + old)
+    print("Previous label: " + type(old))
     print("Updated label: " + new)
 age_onset = TextInput(title="Age at ALS Onset (years)", value="")
 age_onset.on_change("value", age_onset_handler)
@@ -121,9 +123,16 @@ dumbdiv = Div()
 
 
 ## ALSFRS panels
+def dt_alsfrs_1_handler(attr, old, new):
+    print(type(old))
+    print(type(new))
+    print('old was {} and new is {}'.format(old,new))
 dt_alsfrs_1=DatePicker(title='Date of Test 1: ', 
                        min_date=date(1990,1,1),
                        max_date=date.today(), width=100)
+dt_alsfrs_1.on_change("value", dt_alsfrs_1_handler)
+
+
 dt_alsfrs_2=DatePicker(title='Date of Test 2: ', 
                        min_date=date(1990,1,1),
                         max_date=date.today(), width=100)
@@ -140,7 +149,11 @@ dt_alsfrs_6=DatePicker(title='Date of Test 6: ',
                         min_date=date(1990,1,1),
                         max_date=date.today(), width=100)
 wdbox=140
+def Q1_1_handler(attr, old, new):
+    print ('New value: ' + str(new))
 Q1_1 = TextInput(value="3", title="Q1 Speech:", width=wdbox)
+Q1_1.on_change("value", Q1_1_handler)
+
 Q1_2 = TextInput(value="", title="Q1 Speech:", width=wdbox)
 Q1_3 = TextInput(value="", title="Q1 Speech:", width=wdbox)
 Q1_4 = TextInput(value="", title="Q1 Speech:", width=wdbox)
@@ -273,97 +286,100 @@ tab6 = Panel(child= l6, title="ALSFRS-6")
 
 tabs = Tabs(tabs=[ tab1, tab2, tab3, tab4, tab5, tab6], width = 800)
 
-
-## date things
-crnt_date=dt.now()
-
-def callback(attr,old,new):
-    print(type(old))
-    print('old was {} and new is {}'.format(old,new))
-
+'''
 ### alsfrs tables
-## this data table code should be a function called by the prediction button
-# collapse text box inputs into one list
-alsfrs_entries = {'test': ['onset', 'test1', 'test2', 'test3', 'test4', 'test5', 'test6'], 
-                  'day':[0, 1,2,3,4,5,6], 
-                  'Q1':[4, Q1_1.value, Q1_2.value, Q1_3.value, Q1_4.value, Q1_5.value, Q1_6.value], 
-                  'Q2':[4, Q2_1.value, Q2_2.value, Q2_3.value, Q2_4.value, Q2_5.value, Q2_6.value],
-                  'Q3':[4, Q3_1.value, Q3_2.value, Q3_3.value, Q3_4.value, Q3_5.value, Q3_6.value],
-                  'Q4':[4, Q4_1.value, Q4_2.value, Q4_3.value, Q4_4.value, Q4_5.value, Q4_6.value],
-                  'Q5':[4, Q5_1.value, Q5_2.value, Q5_3.value, Q5_4.value, Q5_5.value, Q5_6.value],
-                  'Q6':[4, Q6_1.value, Q6_2.value, Q6_3.value, Q6_4.value, Q6_5.value, Q6_6.value],
-                  'Q7':[4, Q7_1.value, Q7_2.value, Q7_3.value, Q7_4.value, Q7_5.value, Q7_6.value],
-                  'Q8':[4, Q8_1.value, Q8_2.value, Q8_3.value, Q8_4.value, Q8_5.value, Q8_6.value],
-                  'Q9':[4, Q9_1.value, Q9_2.value, Q9_3.value, Q9_4.value, Q9_5.value, Q9_6.value],
-                  'Q10_R1':[4, R1_1.value, R1_2.value, R1_3.value, R1_4.value, R1_5.value, R1_6.value],
-                  'R2':[4, R2_1.value, R2_2.value, R2_3.value, R2_4.value, R2_5.value, R2_6.value],
-                  'R3':[4, R3_1.value, R3_2.value, R3_3.value, R3_4.value, R3_5.value, R3_6.value]}
-
-alsfrs_df = pd.DataFrame(alsfrs_entries)
-
-for c in list(alsfrs_df.columns):
-    alsfrs_df[c] = alsfrs_df[c].where(alsfrs_df[c]!="", np.NaN)
-    alsfrs_df[c] = alsfrs_df[c].where(alsfrs_df[c]!="(depreciated)", np.NaN)
-
-alsfrs_source = ColumnDataSource(alsfrs_df)
-alsfrs_source_columns = [
-    TableColumn(field="test", title="Test Number"),
-    #TableColumn(field="day", title="Date", formatter=DateFormatter()),
-    TableColumn(field="Q1", title="Q1"),
-    TableColumn(field="Q2", title="Q2"),
-    TableColumn(field="Q3", title="Q3"),
-    TableColumn(field="Q4", title="Q4"),
-    TableColumn(field="Q5", title="Q5"),
-    TableColumn(field="Q6", title="Q6"),
-    TableColumn(field="Q7", title="Q7"),
-    TableColumn(field="Q8", title="Q8"),
-    TableColumn(field="Q9", title="Q9"),
-    TableColumn(field="Q10_R1", title="Q10_R1"),
-    TableColumn(field="R2", title="R2"),
-    TableColumn(field="R3", title="R3")
-    
-]
-
-data_table = DataTable(source=alsfrs_source, columns=alsfrs_source_columns, 
-                       width=800, height=280)
-pp_data_table = Paragraph(text="""ALSFRS Data Table""", width=250, height=15)
-
-
 ###  make prediction button   
 def run_predict_button():
-   # 
+    # 
     data = alsfrs_source.data   
     newdata = expand_data(data)  # get the new values from the form and add to data
     source2.data = newdata2
+    show_output = layout([pp_data_table], [data_table], [grid])
+    curdoc().add_root(show_output)
+'''
+
+def create_alsfrs_data():
+    # collapse text box inputs into one list
+    alsfrs_entries = {'test': ['onset', 'test1', 'test2', 'test3', 'test4', 'test5', 'test6'], 
+                      'day_from_onset':[0, "","","","","",""], 
+                      'Q1':[4, Q1_1.value, Q1_2.value, Q1_3.value, Q1_4.value, Q1_5.value, Q1_6.value], 
+                      'Q2':[4, Q2_1.value, Q2_2.value, Q2_3.value, Q2_4.value, Q2_5.value, Q2_6.value],
+                      'Q3':[4, Q3_1.value, Q3_2.value, Q3_3.value, Q3_4.value, Q3_5.value, Q3_6.value],
+                      'Q4':[4, Q4_1.value, Q4_2.value, Q4_3.value, Q4_4.value, Q4_5.value, Q4_6.value],
+                      'Q5':[4, Q5_1.value, Q5_2.value, Q5_3.value, Q5_4.value, Q5_5.value, Q5_6.value],
+                      'Q6':[4, Q6_1.value, Q6_2.value, Q6_3.value, Q6_4.value, Q6_5.value, Q6_6.value],
+                      'Q7':[4, Q7_1.value, Q7_2.value, Q7_3.value, Q7_4.value, Q7_5.value, Q7_6.value],
+                      'Q8':[4, Q8_1.value, Q8_2.value, Q8_3.value, Q8_4.value, Q8_5.value, Q8_6.value],
+                      'Q9':[4, Q9_1.value, Q9_2.value, Q9_3.value, Q9_4.value, Q9_5.value, Q9_6.value],
+                      'Q10_R1':[4, R1_1.value, R1_2.value, R1_3.value, R1_4.value, R1_5.value, R1_6.value],
+                      'R2':[4, R2_1.value, R2_2.value, R2_3.value, R2_4.value, R2_5.value, R2_6.value],
+                      'R3':[4, R3_1.value, R3_2.value, R3_3.value, R3_4.value, R3_5.value, R3_6.value]}
+    alsfrs_df = pd.DataFrame(alsfrs_entries)
+    for c in list(alsfrs_df.columns):
+        alsfrs_df[c] = alsfrs_df[c].where(alsfrs_df[c]!="", np.NaN)
+        alsfrs_df[c] = alsfrs_df[c].where(alsfrs_df[c]!="(depreciated)", np.NaN)
+    return alsfrs_df
+# instaniate alsfrs table
+alsfrs_df = create_alsfrs_data()
+
+# run the function on start up
+#alsfrs_df = alsfrs_update_table()
+            
+'''# get the date difference
+alsfrs_date_list = [dt_alsfrs_1, dt_alsfrs_2, dt_alsfrs_3, dt_alsfrs_4, dt_alsfrs_5, dt_alsfrs_6]
+for i, test_date in enumerate(alsfrs_date_list):
+    if test_date!=None:
+        alsfrs_df['day_from_onset'].iloc[i] = (dt_date_onset.value-test_date.value).days
+'''
+
+# for data table output
+#def alsfrs_source_funt(alsfrs_df):
+alsfrs_source = ColumnDataSource(alsfrs_df)
+
+#return alsfrs_source
+#def alsfrs_source_cols():
+alsfrs_source_columns = [
+        TableColumn(field="test", title="Test Number"),
+        TableColumn(field="day_from_onset", title="Days from Onset"), #formatter=DateFormatter()),
+        TableColumn(field="Q1", title="Q1"),
+        TableColumn(field="Q2", title="Q2"),
+        TableColumn(field="Q3", title="Q3"),
+        TableColumn(field="Q4", title="Q4"),
+        TableColumn(field="Q5", title="Q5"),
+        TableColumn(field="Q6", title="Q6"),
+        TableColumn(field="Q7", title="Q7"),
+        TableColumn(field="Q8", title="Q8"),
+        TableColumn(field="Q9", title="Q9"),
+        TableColumn(field="Q10_R1", title="Q10_R1"),
+        TableColumn(field="R2", title="R2"),
+        TableColumn(field="R3", title="R3") ]
+
+data_table = DataTable(source=alsfrs_source, columns=alsfrs_source_columns, 
+                           width=800, height=280)
+
+pp_data_table = Paragraph(text="""ALSFRS Data Table""", width=250, height=15)
+
 
 ## button to run prediction
 predict_button = Button(label="Run Prediction", button_type="success")
-
-# part of predict family button
-def expand_data(data):
-    # add the als form data to the df
-    
-    # get the current textbox values
-    
-    
-    # update the alsfrs table
-    data
-    #
-    return data
+#predict_button.on_click(run_predict_button)
 
 
 
 ### FIGURES
-
 #lm example
-#x=np.array([0,1,2,3,4,5,6,7,8])
 alsfrs_total = alsfrs_df.copy()
 alsfrs_total.dropna()
 alsfrs_total.drop(['R2','R3'], axis=1, inplace=True)
 alsfrs_total['Total'] = alsfrs_total.sum(axis=1)
+#alsfrs_total['days_from_onset']
 
+#x = alsfrs_total['days_from_onset']
+#y = alsfrs_total['Total']
 
+x=np.array([0,1,2,3,4,5,6,7,8])
 y=np.array([1,2,3,5,4,6,8,7,9])
+
 # determine best fit line
 par = np.polyfit(x, y, 1, full=True)
 slope=par[0][0]
@@ -389,28 +405,15 @@ p2.triangle(x, y1, size=10, color=Viridis3[1])
 p3 = figure(plot_width=250, plot_height=250, title=None)
 p3.square(x, y2, size=10, color=Viridis3[2])
 
-# make a grid
+# make a plot grid
 grid = gridplot([[p1, p2], [None, plot_slope_alsfrs]])  # can also fill in with None
 
+# put all show/hide elements in a group
+show_output = layout([pp_data_table], [data_table], [grid])
+#show_output = layout()
 
 ### Display
 curdoc().title = "ALS_Predict"
-'''
-curdoc().add_root(
-            row(widgetbox(
-                subject_id, dt_date_onset, age_onset,
-                pp_onset, 
-                onset_loc, onset_loc_detail, symptom,
-                pp_riluzole, riluzole, 
-                pp_caucasian, caucasian,
-                pp_sex, sex,
-                width=250),
-                tabs),
-            predict_button, grid )
-'''
-# these removed for troubleshooting
-#
-
 curdoc().add_root( layout([description], row(
     widgetbox(subject_id, dt_date_onset, age_onset, pp_onset, 
                 onset_loc, onset_loc_detail, symptom, pp_riluzole, riluzole, 
@@ -418,6 +421,7 @@ curdoc().add_root( layout([description], row(
                 width=300),
                      tabs), 
                           [predict_button], 
-                          [pp_data_table],
-                          [data_table], 
-                          [grid]))
+                          #[pp_data_table],
+                          #[data_table], 
+                          #[grid]))
+                          show_output))
