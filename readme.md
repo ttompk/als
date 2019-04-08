@@ -4,7 +4,7 @@ Amyotrophic Lateral Sclerosis - aka ALS, Lou Gehrig’s Disease, Motor Neuron Di
 
 ## Project Overview  
 
-Using machine learning, a predictive model was built to determine the length of time from onset of disease until death. The model can predict the day of death with an abolute error of 149 days and an R-squared of 0.75. The model requires information from the onset of disease and functional assessments taken since onset. As a result, the model cannot predict the length of survival at the time of diagnosis unless a functional assessment has been made.
+Using machine learning, several predictive models were built to determine the length of time from onset of disease until death in ALS subjects. A random forest regression model was ultimately chosen as it provided the best performance. The model can predict the day of death with an abolute error of 149 days, an R-squared of 0.75, and accuracy of 83%. The model requires information from the onset of disease and functional assessments taken since onset. As a result, the model cannot predict the length of survival at the time of diagnosis alone, unless a functional assessment has been made. 
 
 ### ALS
 
@@ -31,11 +31,13 @@ See this document for more information on the data collection and curation. [Dat
 ### Model Features
 The model utilizes the following features:
 
-1. ALSFRS Functional Assessment Questions:  The ALSFRS is a clinically-validated tool to assess neuron function over the course of ALS. The test measures the ability of subjects to perform specific tasks. To utilize this important feature, the slope of an onset anchored linear model of the assessment scores over time was utilized. 
-- Q1_Speech, Q2_Salivation, Q3_Swallowing', Q4_Handwriting', slope_Q6_Dressing_and_Hygiene', slope_Q7_Turning_in_Bed', slope_Q8_Walking', Q9_Climbing_Stairs', Q10_Respiratory', updated_ALSFRS_Total',  
+1. ALSFRS Functional Assessments (11 in total)
+2. Age at Onset
+3. Subject used Riluzole
+4. Whether race was Caucasian
+5. First symptom was weakness
+6. Body location where onset occured
 
-features = 'Subject_used_Riluzole', 'Race_Caucasian','age_at_onset',
-            'symptom_weakness','loc_spinal','loc_speech_or_mouth'
 
 ## Feature Details
 #### The Amyotrophic Lateral Sclerosis Functional Rating Scale (ALSFRS)
@@ -55,8 +57,14 @@ Measures:
 - climbing stairs
 - respiratory
 
+These data where collected over several time points. To use them in the model I determined an anchor-onset linear model for each subject. I used the slope of this line in the model. I also fit the data with a 2nd-degree polynomial, as there appeared to be curvature in the data. Using the first and second derivatives as features in the model did not improve the model perfomance. 
+
 ### Diease Onset Location
 
-ALS can affect different neuron groups at the onset of disease. Generally, the location of neuronal involvment includes the include either the which includes the distal limbs 
+ALS can affect different neuron groups at the onset of disease. Generally, the location of neuronal involvement is mapped to neuron clusters in either the bulbar or spinal regions. Bulbar neurons are located in the head region and control such movements as speech and swallowing. The spinal region nerons control the distal limbs. There was evidence in the literature that bulbar involvelment at onset was associated with worsening disease. Indeed there was some signal suggesting this but its impact in predicting survival in the model presented here was negligible.
+
+The location data in the original dataset was messy. Most text strings contained paraphrased, abbreviated, or misspelled words. After cleaning the values were once-hot encoded into several categories.
 
 ### Death
+
+Death, the target variable, was present for only those subjects whom died during a clinical trial.
