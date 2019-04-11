@@ -17,9 +17,11 @@ from bokeh.models.widgets import TextInput, Paragraph, Button, MultiSelect, Radi
 from bokeh.models.widgets import DatePicker, Panel, Tabs, Div, RadioButtonGroup, Button
 from bokeh.models.widgets import Select, DataTable, TableColumn
 
-from bokeh.models import ColumnDataSource, DateFormatter
+from bokeh.models import ColumnDataSource, DateFormatter, Span
 from bokeh.palettes import Viridis3
 
+# set the intial state as prediction not run
+pred_run=False
 
 ''' ---   linear regression of alsfrs  --- '''
 # find linear regression for each question
@@ -57,6 +59,8 @@ def linreg_scalers(df):
                                            0: 'question' ,
                                            1: 'slope', 
                                            2: 'intercept'}, inplace=True)
+    full_result['slope'].astype(float)
+    full_result['intercept'].astype(float)
     
     # return table
     return full_result
@@ -65,6 +69,7 @@ def linreg_scalers(df):
 
 # load pickled model
 filename = 'finalized_model.sav'
+global model
 model = pickle.load(open(filename, 'rb'))
 
 output_file("prediction_ui.html")
@@ -84,7 +89,7 @@ def dt_date_onset_handler(attr, old, new):
 dt_date_onset=DatePicker(title="Date of ALS Onset", 
                          min_date=date(1990,1,1),
                          max_date=date.today(),
-                         value=date(2019,4,1))
+                         value=date(2015,3,1))
 dt_date_onset.on_change("value", dt_date_onset_handler)
 
 # subject id
@@ -121,7 +126,6 @@ symptom = Select(title="Symptom Type:", value="Unknown",
 # onset radio button
 def onset_loc_handler(new):
     print ('Radio button option' + str(new) + ' selected.')
-    
 pp_onset = Paragraph(text="""Onset Neuron Group""", width=250, height=15)
 onset_loc = RadioButtonGroup(labels=["Bulbar", "Spinal", "Both", "*Unk"], active=3)
 #onset_loc.on_click(onset_loc_handler)
@@ -129,30 +133,23 @@ onset_loc = RadioButtonGroup(labels=["Bulbar", "Spinal", "Both", "*Unk"], active
 # riluzole radio button
 def riluzole_handler(new):
     print ('Radio button option ' + str(new) + ' selected.')
-    
 pp_riluzole = Paragraph(text="""Subject used Riluzole""", width=250, height=15)
-riluzole = RadioButtonGroup(labels=["Yes", "No", "*Unk"], active=2)
+riluzole = RadioButtonGroup(labels=["No", "Yes", "*Unk"], active=2)
 riluzole.on_click(onset_loc_handler)
 
 # caucasian radio button
 def caucasian_handler(new):
     print ('Radio button option ' + str(new) + ' selected.')
-    
 pp_caucasian = Paragraph(text="""Race Caucasian""", width=250, height=15)
-caucasian = RadioButtonGroup(labels=["Yes", "No", "*Unk"], active=2) 
+caucasian = RadioButtonGroup(labels=["No", "Yes", "*Unk"], active=2) 
 caucasian.on_click(caucasian_handler)
 
 # sex radio button
 def sex_handler(new):
     print ('Radio button option ' + str(new) + ' selected.')
-    
 pp_sex = Paragraph(text="""Sex""", width=250, height=15)
-sex = RadioButtonGroup(labels=["Male", "Female", "*Unk"], active=2)
+sex = RadioButtonGroup(labels=["Female", "Male", "*Unk"], active=2)
 sex.on_click(sex_handler)
-
-
-dumbdiv = Div()
-
 
 
 #### ALSFRS panels
@@ -160,13 +157,13 @@ dumbdiv = Div()
 dt_alsfrs_1=DatePicker(title='Date of Test 1: ', 
                        min_date=date(1990,1,1),
                        max_date=date.today(), 
-                       value=date.today(),
+                       value=date(2015,9,1),
                        width=100)
 
 dt_alsfrs_2=DatePicker(title='Date of Test 2: ', 
                        min_date=date(1990,1,1),
                        max_date=date.today(), 
-                       value=date.today(),
+                       value=date(2016,3,1),
                        width=100)
 
 dt_alsfrs_3=DatePicker(title='Date of Test 3: ', 
@@ -278,6 +275,14 @@ R3_4 = TextInput(value="", title="R3:", width=wdbox)
 R3_5 = TextInput(value="", title="R3:", width=wdbox)
 R3_6 = TextInput(value="", title="R3:", width=wdbox)
 
+# create dummys for tab layout
+dumbdiv1a = Div()
+dumbdiv2a = Div()
+dumbdiv3a = Div()
+dumbdiv4a = Div()
+dumbdiv5a = Div()
+dumbdiv6a = Div()
+
 
 #### ALSFRS boxes
 
@@ -290,27 +295,27 @@ l1 = layout([dt_alsfrs_1], l1a, sizing_mode='scale_width')
 l2a = row(widgetbox(Q1_2, Q2_2, Q3_2, Q4_2, width=wd), 
           widgetbox(Q5_2, Q6_2, Q7_2, Q8_2, width=wd), 
           widgetbox(Q9_2, R1_2, R2_2, R3_2, width=wd))
-l2 = layout([dt_alsfrs_2], l2a, sizing_mode='scale_width')
+l2 = layout([dt_alsfrs_2], [dumbdiv2a], l2a, sizing_mode='scale_width')
 
 l3a = row(widgetbox(Q1_3, Q2_3, Q3_3, Q4_3, width=wd), 
           widgetbox(Q5_3, Q6_3, Q7_3, Q8_3, width=wd), 
           widgetbox(Q9_3, R1_3, R2_3, R3_3, width=wd))
-l3 = layout([dt_alsfrs_3], l3a, sizing_mode='scale_width')
+l3 = layout([dt_alsfrs_3], [dumbdiv3a], l3a, sizing_mode='scale_width')
 
 l4a = row(widgetbox(Q1_4, Q2_4, Q3_4, Q4_4, width=wd), 
           widgetbox(Q5_4, Q6_4, Q7_4, Q8_4, width=wd), 
           widgetbox(Q9_4, R1_4, R2_4, R3_4, width=wd))
-l4 = layout([dt_alsfrs_4], l4a, sizing_mode='scale_width')
+l4 = layout([dt_alsfrs_4], [dumbdiv4a], l4a, sizing_mode='scale_width')
 
 l5a = row(widgetbox(Q1_5, Q2_5, Q3_5, Q4_5, width=wd), 
           widgetbox(Q5_5, Q6_5, Q7_5, Q8_5, width=wd), 
           widgetbox(Q9_5, R1_5, R2_5, R3_5, width=wd))
-l5 = layout([dt_alsfrs_5], l5a, sizing_mode='scale_width')
+l5 = layout([dt_alsfrs_5], [dumbdiv5a], l5a, sizing_mode='scale_width')
 
 l6a = row(widgetbox(Q1_6, Q2_6, Q3_6, Q4_6, width=wd), 
           widgetbox(Q5_6, Q6_6, Q7_6, Q8_6, width=wd), 
           widgetbox(Q9_6, R1_6, R2_6, R3_6, width=wd))
-l6 = layout([dt_alsfrs_6], l6a, sizing_mode='scale_width')
+l6 = layout([dt_alsfrs_6], [dumbdiv6a], l6a, sizing_mode='scale_width')
 
 tab1 = Panel(child= l1, title="ALSFRS-1")
 tab2 = Panel(child= l2, title="ALSFRS-2")
@@ -322,6 +327,8 @@ tab6 = Panel(child= l6, title="ALSFRS-6")
 tabs = Tabs(tabs=[ tab1, tab2, tab3, tab4, tab5, tab6], width = 800)
 
 
+
+''' --- Tables to update  --- '''
 ### alsfrs tables
 
 # make df of input values
@@ -378,6 +385,110 @@ alsfrs_df = create_alsfrs_data()
 # for data table output
 alsfrs_source = ColumnDataSource(alsfrs_df)
 
+
+'''   --- Data for models ---   '''
+### create model data
+### load in baseline data on all modeling features or generic prediction
+def create_base_data():
+    base = pd.read_csv("baseline_df.csv")
+    global baseline_source
+    baseline_source = ColumnDataSource(base)
+    return base
+
+base = create_base_data()
+
+
+# update the baseline model with new data
+def model_data_update(slope):
+    global base
+    base = create_base_data()
+    
+    if age_onset.value != "":
+        base['age_at_onset'] = age_onset.value
+    else:
+        base['age_at_onset'] = 57.514399
+    
+    if riluzole.active == 2:
+        base['Subject_used_Riluzole'] = 1
+    else:
+        base['Subject_used_Riluzole'] = riluzole.active
+    
+    if  caucasian.active == 2:
+        base['Race_Caucasian'] = 1
+    else:
+        base['Race_Caucasian'] = caucasian.active
+    
+    if symptom.value == "Weakness":
+        base['symptom_weakness'] = 1
+    else:
+        base['symptom_weakness'] = 0
+    
+    if onset_loc.active == 3:
+        base['loc_spinal'] = 1
+        base['loc_speech_or_mouth'] = 0
+    elif onset_loc.active == 2:
+        base['loc_spinal'] = 1
+        base['loc_speech_or_mouth'] = 1
+    elif onset_loc.active == 1:
+        base['loc_spinal'] = 1
+        base['loc_speech_or_mouth'] = 0
+    else:
+        base['loc_spinal'] = 0
+        base['loc_speech_or_mouth'] = 1
+    
+    # update with question slope values
+    base['slope_Q1_Speech'] = float(slope['slope'].loc[slope['question']=='Q1'])
+    base['slope_Q2_Salivation'] = float(slope['slope'].loc[slope['question']=='Q2'])
+    base['slope_Q3_Swallowing'] = float(slope['slope'].loc[slope['question']=='Q3'])
+    base['slope_Q4_Handwriting'] = float(slope['slope'].loc[slope['question']=='Q4'])
+    base['slope_Q6_Dressing_and_Hygiene'] = float(slope['slope'].loc[slope['question']=='Q6'])
+    base['slope_Q7_Turning_in_Bed'] = float(slope['slope'].loc[slope['question']=='Q7'])
+    base['slope_Q8_Walking'] = float(slope['slope'].loc[slope['question']=='Q8'])
+    base['slope_Q9_Climbing_Stairs'] = float(slope['slope'].loc[slope['question']=='Q9'])
+    base['slope_Q10_Updated'] = float(slope['slope'].loc[slope['question']=='Q10_R1'])
+    base['slope_updated_ALSFRS_Total'] = float(slope['slope'].loc[slope['question']=='ALSFRS_Total'])
+    #end function
+
+    
+    
+'''---  Prediction Button  ---'''
+
+## button to run prediction 
+def run_predict_button():
+    global prediction
+    global pred_run
+    global data_table
+    pred_run=True
+    alsfrs_df = create_alsfrs_data()
+    update_data = None
+    data_table.source.data.update(alsfrs_df)
+    slope = linreg_scalers( alsfrs_df )
+    model_data_update(slope)
+    plotting_slope_df = plotting_slope()
+    
+    # run prediction on pickle model
+    prediction = model.predict(base)[0]
+    predict_output_handler()
+    print(prediction)
+    print(type(prediction))
+    vline.location = prediction
+    pred_run=True
+    #end function
+
+predict_button = Button(label="Run Prediction", button_type="success")
+predict_button.on_click(run_predict_button)
+
+# update the text with predict button click
+predict_output = Div(text='Current Survival Prediction (Base Model): ' + '</br>' + '1205.19 days' + '</br>', 
+                     width=800, style={'font-size': '200%', 'color': 'black'}) #, height=height)
+def predict_output_handler():
+    predict_output.text = 'Updated Survival Prediction: ' + '</br>' + str(prediction) + '</br>'
+
+
+
+'''---  Output  ---'''
+
+### DataTable
 #return alsfrs_source
 #def alsfrs_source_cols():
 alsfrs_source_columns = [
@@ -403,135 +514,47 @@ data_table = DataTable(source=alsfrs_source, columns=alsfrs_source_columns,
 pp_data_table = Paragraph(text="""ALSFRS Data Table""", width=250, height=15)
 
 
-'''   --- Data for models ---   '''
-### create model data
-### load in baseline data on all modeling features or generic prediction
-def create_base_data():
-    base = pd.read_csv("baseline_df.csv")
-    return base
-
-base = create_base_data()
-baseline_source = ColumnDataSource(base)
-
-# update the baseline model with new data
-def model_data_update():
-    base = create_base_data()
-    alsfrs_slope = linreg_scalers( create_alsfrs_data() )
-    
-    if age_onset.value != "*Unk":
-        base['age_at_onset'] = age_onset.value
-    else:
-        base['age_at_onset'] = 57.514399
-    
-    if riluzole.active != "*Unk":
-        base['Subject_used_Riluzole'] = riluzole.active
-    else:
-        base['Subject_used_Riluzole'] = 1
-    
-    if  caucasian.active != "*Unk":
-        base['Race_Caucasian'] = caucasian.active
-    else:
-        base['Race_Caucasian'] = 1
-    
-    if symptom.value == "Weakness":
-        base['symptom_weakness'] = 1
-    else:
-        base['symptom_weakness'] = 1
-    
-    if onset_loc.active == 'Spinal':
-        base['loc_spinal'] = 1
-    else:
-        base['loc_spinal'] = 1
-    
-    if onset_loc.active == 'Bulbar':
-        base['loc_speech_or_mouth'] = 1
-    else:
-        base['loc_speech_or_mouth'] = 0
-    
-    # update with question slope values
-    base['slope_Q1_Speech'] = alsfrs_slope['Q1']
-    base['slope_Q2_Salivation'] = alsfrs_slope['Q2']
-    base['slope_Q3_Swallowing'] = alsfrs_slope['Q3']
-    base['slope_Q4_Handwriting'] = alsfrs_slope['Q4']
-    base['slope_Q6_Dressing_and_Hygiene'] = alsfrs_slope['Q6']
-    base['slope_Q7_Turning_in_Bed'] = alsfrs_slope['Q7']
-    base['slope_Q8_Walking	'] = alsfrs_slope['Q8']
-    base['slope_Q9_Climbing_Stairs'] = alsfrs_slope['Q9']
-    base['slope_Q10_Updated'] =alsfrs_slope['Q10_R1']
-    base['slope_updated_ALSFRS_Total'] = alsfrs_slope['ALSFRS_Total']
-    
-    #plot total alsfrs
-    
-    #run a prediction on the model
-    prediction = model.predict(base)
-    print(prediction)
-    
-    return base
-    #end function
-
-    
-'''---  Prediction Button  ---'''
-## button to run prediction
-###  make prediction button   
-def run_predict_button():
-    # 
-    alsfrs_df = create_alsfrs_data()
-    global data_table
-    update_data = None
-    data_table.source.data.update(alsfrs_df)
-    linreg_scalers( alsfrs_df )
-    model_data = model_data_update()
-    plot_line_over_actuals()
-    #end function
-    
-predict_button = Button(label="Run Prediction", button_type="success")
-predict_button.on_click(run_predict_button)
-
-
-'''---  Figures  ---'''
 ### FIGURES
-#def plot_line_over_actuals(df_points, df_slope):
 
+def plotting_slope():
+    xxx = create_alsfrs_data()['day_from_onset'].values
+    yyy = create_alsfrs_data()['ALSFRS_Total'].values
 
-#print(alsfrs_source.data)
+    # determine best fit line
+    par = np.polyfit(xxx, yyy, 1, full=True)
+    slope=par[0][0]
+    intercept=par[0][1]
+    y_predicted = [slope*i + intercept  for i in xxx]
+    plotting_slope_df = pd.DataFrame({'xxx': xxx, 'y_predicted': y_predicted}, columns=['xxx', 'y_predicted'])
+    print(plotting_slope_df)
+    return plotting_slope_df
 
+# run plotting slope for first time.
+plotting_slope_df = plotting_slope()
+slope1_source = ColumnDataSource(plotting_slope_df)
 
-#ALSFRS_plot.line('day_from_onset', 'ALSFRS_Total', source=alsfrs_source, line_width=2)
-#plt.plot(points[x_col].values, line[y_col_inter].values + line[y_col_slope].values * points[x_col].values
+def ALSFRS_plot():
+    ALSFRS_plot = figure( plot_width=400, plot_height=400, title="ALSFRS Total Score")
+    #gg= alsfrs_source
+    plotting_slope()
+    # plot it bokeh style
+    #ALSFRS_plot.circle(xxx,yyy)
+    ALSFRS_plot.line('day_from_onset', 'ALSFRS_Total', source=alsfrs_source, line_width=2, line_color="gray")
+    ALSFRS_plot.line('xxx', 'y_predicted', line_color='red', line_width=3, legend="slope", source=slope1_source)
+    ALSFRS_plot.xaxis.axis_label = "Days From Onset"
+    ALSFRS_plot.yaxis.axis_label = "ALSFRS Total Score"
+    ALSFRS_plot.xgrid.visible = False
+    ALSFRS_plot.ygrid.visible = False
+    return ALSFRS_plot
 
-#x=np.array([0,1,2,3,4,5,6,7,8])
-#y=np.array([1,2,3,5,4,6,8,7,9])
-
-ALSFRS_plot = figure( plot_width=400, plot_height=400, title="ALSFRS Total Score")
-gg= alsfrs_source
-xxx = create_alsfrs_data()['day_from_onset'].values
-yyy = create_alsfrs_data()['ALSFRS_Total'].values
-
-# determine best fit line
-par = np.polyfit(xxx, yyy, 1, full=True)
-slope=par[0][0]
-intercept=par[0][1]
-y_predicted = [slope*i + intercept  for i in xxx]
-# plot it bokeh style
-#plot_slope_alsfrs=figure(plot_width=250, plot_height=250)
-#ALSFRS_plot.circle(xxx,yyy)
-ALSFRS_plot.line('day_from_onset', 'ALSFRS_Total', source=alsfrs_source, line_width=2, line_color="gray")
-ALSFRS_plot.line(xxx, y_predicted, line_color='red', line_width=3, legend="slope")
-ALSFRS_plot.xaxis.axis_label = "Days From Onset"
-ALSFRS_plot.yaxis.axis_label = "ALSFRS Total Score"
-ALSFRS_plot.xgrid.visible = False
-ALSFRS_plot.ygrid.visible = False
-
-
-
-## test figures
-
+## test figure
 def this_awesome_plot():
     plot = figure(plot_width=400, plot_height=400)
     plot.multi_line([[1, 3, 2], [3, 4, 6, 6]], [[2, 1, 4], [4, 7, 8, 5]],
              color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
     return plot
 
+# test figure
 def testplot1():
     x = list(range(11))
     y0 = x
@@ -544,18 +567,25 @@ def testplot1():
     return p1
 
 def make_hist_plot(title, hist, edges, x, pdf):
-    p = figure(title=title, tools='', background_fill_color="#fafafa", plot_width=400, plot_height=400)
+    p = figure(title=title, tools='', plot_width=400, plot_height=400, x_range=(-50, 3500))
     p.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:],
-           fill_color="navy", line_color="white", alpha=0.5)
-    p.line(x, pdf, line_color="#ff8888", line_width=4, alpha=0.7, legend="PDF")
-
+           fill_color="#1C2833", line_color="white", alpha=0.6)
+    if pred_run == True:
+        death_day=prediction
+    else: 
+        death_day=1205
+    global vline
+    vline = Span(location=death_day, dimension='height', line_color='red', line_width=4)
+    p.renderers.extend([vline])
+    p.line(x, pdf, line_color="gray", line_width=4, alpha=0.7, legend="PDF")
     p.y_range.start = 0
     p.legend.location = "center_right"
-    p.legend.background_fill_color = "#fefefe"
-    p.xaxis.axis_label = 'x'
-    p.yaxis.axis_label = 'Pr(x)'
+    p.legend.background_fill_color = "#F8F9F9"
+    p.xaxis.axis_label = 'days'
+    p.yaxis.axis_label = 'subjects'
     p.grid.grid_line_color="white"
     return p
+
 
 # Death Distribution
 def death_dist():
@@ -566,14 +596,18 @@ def death_dist():
     hist, edges = np.histogram(died_days['death_day_since_onset'], density=True, bins=50)
     x = np.linspace(0, 1800, 1000)
     pdf = 1/(sigma * np.sqrt(2*np.pi)) * np.exp(-(x-mu)**2 / (2*sigma**2))
-    return dist_plot = make_hist_plot("Day of Death Distribution", hist, edges, x, pdf)
+    return make_hist_plot("Day of Death Distribution", hist, edges, x, pdf)
 
 
-# make a plot grid
-grid = gridplot([[ALSFRS_plot, death_dist()], [this_awesome_plot(), None ]])
 
+
+''' ---  Display in bokeh server  --- '''
+
+grid=gridplot([[ALSFRS_plot(), death_dist()], [None, None ]])
+    
 # put all show/hide elements in a group
-show_output = layout([pp_data_table], [data_table], [grid])
+show_output = layout( [predict_output], [pp_data_table], [grid], [data_table])
+
 
 ### Display
 curdoc().title = "ALS_Predict"
