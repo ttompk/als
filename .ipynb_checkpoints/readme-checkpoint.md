@@ -19,17 +19,18 @@ Disease progression is measured using validated functional assessments including
 
 ### Data
 
+All data was provided with permission by the PRO-ACT ALS organization. 
 
-Data for this project included information from over 10,000 clinical trials subjects. Despite this number, few subjects had data across all features, and thus the overall number of subjects available for analysis was significantly more limited.
+Data for this project included information from over 10,000 clinical trials subjects who participated in over 20 clincial trials. The dataset included both treated and placebo subjects, however no information on the drug, e.g. name, dose, route of administration, was provided. Importantly, all trials failed to show a significant difference between treatment and placebo groups.
 
-All data was provided by the PRO-ACT ALS organization. The dataset contained data on over 10,000 clinical trial participants from over 20 clinical trials. All trails failed to show a significant difference between treatment and placebo groups.
+Despite the large number of large subjects, few had data across all features, and thus the overall number of subjects available for modeling was significantly more limited.
 
 See this document for more information on the data collection and curation. [Data Dictionary](https://nctu.partners.org/ProACT/Document/DisplayLatest/2)
 
 
-### Model Features
+### Features
 
-The dataset contained multiple features, including: laboratory data, FVC, SVC, ALSFRS scores (functional assessments), demographic data (age, sex, weight, etc), symptoms at onset, family history, and others. These values were either subject level, one value per subject (symptoms, demographic), or repeated measures (e.g. ALSFRS, FVC).
+The dataset contained multiple features, including: laboratory data, forced vital capcity (FVC), slow vital capcity (SVC), ALSFRS scores (functional assessments), demographic data (age, sex, weight, etc), symptoms at onset, family history, and others. These values were either subject level, one value per subject (e.g. symptoms, demographic), or repeated measures (e.g. ALSFRS, FVC, labs). 
 
 As expected in a study spaning multiple studies, not all assessments were performed in every study and studies with similar assessments did not always perform testing on the same schedule. 
 
@@ -48,35 +49,45 @@ The model utilizes the following features:
 #### The Amyotrophic Lateral Sclerosis Functional Rating Scale (ALSFRS)
 
 Overview:
-The Amyotrophic Lateral Sclerosis Functional Rating Scale (ALSFRS) is an instrument for evaluating the functional status of patients with Amyotrophic Lateral Sclerosis. It can be used to monitor functional change in a patient over time.
+The Amyotrophic Lateral Sclerosis Functional Rating Scale (ALSFRS) is an instrument for evaluating the functional status of patients with Amyotrophic Lateral Sclerosis. It can be used to monitor functional change in a patient over time. 
 
 Measures:
-- speech
-- salivation
-- swallowing
-- handwriting
-- cutting food and handling utensils (with or without gastrostomy)
-- dressing and hygiene
-- turning in bed and adjusting bed clothes
-- walking
-- climbing stairs
-- respiratory
+- Q1: speech
+- Q2: salivation
+- Q3: swallowing
+- Q4: handwriting
+- Q5: cutting food and handling utensils (with or without gastrostomy)
+- Q6: dressing and hygiene
+- Q7: turning in bed and adjusting bed clothes
+- Q8: walking
+- Q9: climbing stairs
+- Q10: respiratory (replaced with revised scale R1: , R2: , R3: )
 
-These data where collected over several time points. To use them in the model I determined an anchor-onset linear model for each subject. I used the slope of this line in the model. I also fit the data with a 2nd-degree polynomial, as there appeared to be curvature in the data. Using the first and second derivatives as features in the model did not improve the model perfomance. 
+Scores from individual questions are summed to create a 'Total' score ranging from 40, maximal ordinary function, to 0, no function at all. 
+
+Some subjects had a revised functional assessment score. The revised scale replaced question 10, respiratory, with three additional questions. To maximize the number of subjects in the analysis, the first of the three revised scores, R1, was used to represent Q10 from the unrevised scale, thereby maintaining a total score of 40.
+
+These data where collected over several time points. To use the ALSFRS scores in a model, the repeated measures had to be distilled to one value (or 2 in case of a ploynomial fit) for each subject. This value would then be used in the model to predict survival. As suggested by (Karanevich et al)[https://www.ncbi.nlm.nih.gov/pubmed/29409450] an additional maximal score of 4 for each question (40 total) was added for each subject at the time of disease onset. An assumption was made that each subject was completely functional prior to disease symptoms.
+
+![alt text](https://github.com/ttompk/als/tree/master/images/alsfrs_start.png "ALSFRS Assessments and Disease Onset")
+
+To detect rate of decreasing function, a linear regression line was fitted to each subject's indivual ALSFRS responses and the combined score. The onset-anchored point was critical to stabilizing the slope of the linear model for each subject. Additional fits using multi-degree polynomials were also fit using the first and second derivatives as features in the model. These polynomial fits generally provided worse fitting of the model and were rejected for incorporation in the final model.
 
 ### Diease Onset Location
 
-ALS can affect different neuron groups at the onset of disease. Generally, the location of neuronal involvement is mapped to neuron clusters in either the bulbar or spinal regions. Bulbar neurons are located in the head region and control such movements as speech and swallowing. The spinal region nerons control the distal limbs. There was evidence in the literature that bulbar involvelment at onset was associated with worsening disease. Indeed there was some signal suggesting this but its impact in predicting survival in the model presented here was negligible.
+ALS can affect different neuron groups at the onset of disease. Generally, the location of neuronal involvement at onset is mapped to neuron clusters in either the bulbar or spinal regions. Bulbar neurons are located in the head region and control such movements as speech and swallowing. The spinal region nerons control the distal limbs. There was evidence in the literature that bulbar involvelment at onset was associated with worsening disease. [reference] Indeed there was some signal suggesting this but its impact in predicting survival in the model presented here was negligible.
 
-The location data in the original dataset was messy. Most text strings contained paraphrased, abbreviated, or misspelled words. After cleaning the values were once-hot encoded into several categories.
+The location data in the original dataset was messy. Most text strings contained paraphrased, abbreviated, or misspelled words. After cleaning, the values were one-hot encoded into several categories and evaluated in the model.
 
 ### Death
 
 Death, the target variable, was present for only those subjects whom died during a clinical trial. This feature severely limited the amount of data available for analysis.
 
 
-## Feature Engineering
 ### 
+
+
+
 
 
 ## The model
