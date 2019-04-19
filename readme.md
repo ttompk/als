@@ -72,11 +72,12 @@ The location data in the original dataset was messy. Most text strings contained
 
 ### Death
 
-Death, the target variable, was present for only those subjects whom died during a clinical trial.
+Death, the target variable, was present for only those subjects whom died during a clinical trial. This feature severely limited the amount of data available for analysis.
 
 
 ## Feature Engineering
 ### 
+
 
 ## The model
 Several models were evaluated. 

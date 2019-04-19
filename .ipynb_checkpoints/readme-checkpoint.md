@@ -4,39 +4,44 @@ Amyotrophic Lateral Sclerosis - aka ALS, Lou Gehrig’s Disease, Motor Neuron Di
 
 ## Project Overview  
 
-Using machine learning, several predictive models were built to determine the length of time from onset of disease until death in ALS subjects. The final model was a random forest regression model that can predict the day of death with an abolute error of 149 days, an R-squared of 0.75, and accuracy of 83%. The model requires information about the onset of disease and functional assessments taken since onset. An interactive html tool allows a user to enter a subject's demographic and functional data and retrieve a prediction.
+Using machine learning, several predictive models were built to determine the length of time from onset of disease until death in ALS subjects. The final model was a random forest regression alogorithm that can predict the day of death with an abolute error of 151 days, an R-squared of 0.73, and median absolute percentage error of 12%. The model takes in information about the onset of disease, demographic data, and repeated functional assessment scores taken since onset. An interactive html tool allows a user to enter a subject's ALS data and retrieve a prediction.
 
 ### ALS
 
 Amyotrophic lateral sclerosis (ALS), also known as motor neurone disease (MND) or Lou Gehrig's disease, is a fatal disease affecting the motor neurons of the brain and spinal cord.  Motor neurons are responsible for controling body movements including such movements as walking, talking, eating, and breathing. Progressive degeneration of the motor neurons in ALS eventually leads to neural necrosis. When the motor neurons die, the ability of the brain to initiate and control muscle movement is permanently lost.  
 
-Each year approximately 5,600 American's are diagnosed with ALS. Currently, there is **NO CURE FOR ALS**.
-                
-This project sought to predict the length of survival of ALS subjects. Death from onset of disease is rapid but also heterogeneous, with 50% dying within three years of symptom onset, 75% within the first five years, and 90% within 10 years. 
+ALS is a terminal, progressive disease. Each year approximately 5,600 American's are diagnosed with ALS. Currently, there is **NO CURE FOR ALS**.
+        
+This project sought to predict the length of survival of ALS subjects. Death from onset of disease is rapid but also heterogeneous, with 50% dying within three years of symptom onset, 75% within the first five years, and 90% within 10 years. Most ALS subjects die as a result of resperatory failure. 
 
-Data was provided by the PRO-ACT ALS organization. The dataset contained data on over 10,000 clinical trial participants, and included ... However, few values were available across multiple domains for each subject.  
-                
-ALS is a terminal, progressive disease. Most ALS subjects die as a result of resperatory failure. Disease progression is measured using validated functional assessments including the ALSFRS, Forced Vital Capacity, and Slow Vital Capacity.  
-
-This project used data collected from over 25 ALS clinical trials - all trials failed to show improvement in the treatment group!
+Disease progression is measured using validated functional assessments including the ALSFRS, Forced Vital Capacity, and Slow Vital Capacity, and clinical laboratory results.  
  
 
 ### Data
 
+
 Data for this project included information from over 10,000 clinical trials subjects. Despite this number, few subjects had data across all features, and thus the overall number of subjects available for analysis was significantly more limited.
+
+All data was provided by the PRO-ACT ALS organization. The dataset contained data on over 10,000 clinical trial participants from over 20 clinical trials. All trails failed to show a significant difference between treatment and placebo groups.
 
 See this document for more information on the data collection and curation. [Data Dictionary](https://nctu.partners.org/ProACT/Document/DisplayLatest/2)
 
 
 ### Model Features
+
+The dataset contained multiple features, including: laboratory data, FVC, SVC, ALSFRS scores (functional assessments), demographic data (age, sex, weight, etc), symptoms at onset, family history, and others. These values were either subject level, one value per subject (symptoms, demographic), or repeated measures (e.g. ALSFRS, FVC).
+
+As expected in a study spaning multiple studies, not all assessments were performed in every study and studies with similar assessments did not always perform testing on the same schedule. 
+
 The model utilizes the following features:
 
-1. ALSFRS Functional Assessments (11 in total)
+1. ALSFRS Functional Assessments (10 questions)
 2. Age at Onset
 3. Subject used Riluzole
 4. Whether race was Caucasian
 5. First symptom was weakness
 6. Body location where onset occured
+
 
 
 ## Feature Details
@@ -67,8 +72,15 @@ The location data in the original dataset was messy. Most text strings contained
 
 ### Death
 
-Death, the target variable, was present for only those subjects whom died during a clinical trial.
+Death, the target variable, was present for only those subjects whom died during a clinical trial. This feature severely limited the amount of data available for analysis.
 
+
+## Feature Engineering
+### 
+
+
+## The model
+Several models were evaluated. 
 
 ## Surpises
 
