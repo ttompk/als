@@ -69,7 +69,7 @@ Some subjects had a revised functional assessment score. The revised scale repla
 
 These data where collected over several time points. To use the ALSFRS scores in a model, the repeated measures had to be distilled to one value (or 2 in case of a ploynomial fit) for each subject. This value would then be used in the model to predict survival. As suggested by (Karanevich et al)[https://www.ncbi.nlm.nih.gov/pubmed/29409450] an additional maximal score of 4 for each question (40 total) was added for each subject at the time of disease onset. An assumption was made that each subject was completely functional prior to disease symptoms.
 
-![alt text](https://github.com/ttompk/als/tree/master/images/alsfrs_start.png "ALSFRS Assessments and Disease Onset")
+![alt text](https://github.com/ttompk/als/blob/master/images/alsfrs_start.png)
 
 To detect rate of decreasing function, a linear regression line was fitted to each subject's indivual ALSFRS responses and the combined score. The onset-anchored point was critical to stabilizing the slope of the linear model for each subject. Additional fits using multi-degree polynomials were also fit using the first and second derivatives as features in the model. These polynomial fits generally provided worse fitting of the model and were rejected for incorporation in the final model.
 
