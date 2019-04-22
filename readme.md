@@ -81,7 +81,7 @@ The location data in the original dataset was messy. Most text strings contained
 
 ### Death
 
-Death, the target variable, was present for only those subjects whom died during a clinical trial. This feature severely limited the amount of data available for analysis.
+Death, the target variable, was present for only those subjects whom died during a clinical trial. The fact that a majority of subjects were lost to followup limited the amount of data available for the analysis.
 
 
 ### 
