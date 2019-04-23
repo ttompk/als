@@ -8,7 +8,8 @@ Using machine learning, several predictive models were built to determine the le
 
 ### ALS
 
-![als_man](https://github.com/ttompk/als/blob/master/images/als_man.png)
+![als_man](https://github.com/ttompk/als/blob/master/images/als_man.png)  
+
 Amyotrophic lateral sclerosis (ALS), also known as motor neurone disease (MND) or Lou Gehrig's disease, is a fatal disease affecting the motor neurons of the brain and spinal cord.  Motor neurons are responsible for controling body movements including walking, talking, eating, and breathing. Progressive degeneration of the motor neurons in ALS eventually leads to neural necrosis. When the motor neurons die, the ability of the brain to initiate and control muscle movement is permanently lost.  
 
 ALS is a terminal, progressive disease. Each year approximately 5,600 American's are diagnosed with ALS. Currently, there is **NO CURE FOR ALS**.
@@ -21,6 +22,8 @@ Disease progression is measured using validated functional assessments including
 ### Data
 
 All data was provided with permission by the PRO-ACT ALS organization. 
+
+![pro-act-logo](https://github.com/ttompk/als/blob/master/images/Pro-Act-logo.gif)  
 
 Data for this project included information from over 10,000 clinical trials subjects who participated in over 20 clincial trials. The dataset included both treated and placebo subjects, however no information on the drug, e.g. name, dose, route of administration, was provided. Importantly, all trials in the dataset failed to show a significant difference between treatment and placebo groups.
 
@@ -43,7 +46,6 @@ The model utilizes the following features:
 4. Whether race was Caucasian
 5. First symptom was weakness
 6. Body location where onset occured
-
 
 
 ## Feature Details

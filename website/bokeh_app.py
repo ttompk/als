@@ -1,4 +1,23 @@
-#bokeh_app
+# ALS survival prediction 
+'''
+To run app, use this statement in the command line:
+
+**
+bokeh serve --show bokeh_app.py
+**
+
+HTML-based app written with bokeh and python. The file is hosted on a bokeh server.
+
+Takes a pickled model and user inputed
+values and performs a prediction for how long someone is likely to survive with 
+ALS. 
+ 
+Default values for two repeats of ALSFRS scores were included to show program's ability. 
+These default values can be overwritten by actual values.
+'''
+
+
+# load dependency libraries
 import pandas as pd
 import numpy as np
 from os.path import dirname, join
@@ -9,6 +28,7 @@ from collections import defaultdict
 from scipy.stats import linregress
 import pickle
 
+# load bokeh libraries and methods
 from bokeh.io import output_file, show, curdoc
 from bokeh.layouts import widgetbox, row, gridplot, layout
 from bokeh.layouts import column as bokehcolumn
@@ -16,15 +36,25 @@ from bokeh.plotting import figure
 from bokeh.models.widgets import TextInput, Paragraph, Button, MultiSelect, RadioGroup
 from bokeh.models.widgets import DatePicker, Panel, Tabs, Div, RadioButtonGroup, Button
 from bokeh.models.widgets import Select, DataTable, TableColumn
-
 from bokeh.models import ColumnDataSource, DateFormatter, Span
 from bokeh.palettes import Viridis3
 
-# set the intial state as prediction not run
+
+### Set Initial State load files  ###
+# set the intial state so that prediction will not run on start up.
 pred_run=False
 
-''' ---   linear regression of alsfrs  --- '''
-# find linear regression for each question
+# load pickled model
+filename = 'finalized_model.sav'
+global model
+model = pickle.load(open(filename, 'rb'))
+
+# set current data variable
+crnt_date=dt.now()
+
+''' ---   function: linear regression of alsfrs  --- '''
+# this function fits a linear regression line to each repeated question.
+
 def linreg_scalers(df):
     '''
     creates linear regression slopes, intercepts for every alsfrs value in a df.
@@ -34,9 +64,10 @@ def linreg_scalers(df):
         y_col = name of first y data column
         x_col = name of column with x values
         y_label = name of y feature (for table output)
-    output:
-        regression outputs in dataframe
+    output:   None
+    returns:  slopes and intercepts as dataframe.
     '''
+    
     slopes = defaultdict()
     # format df for analysis
     df.dropna(inplace=True)
@@ -62,24 +93,18 @@ def linreg_scalers(df):
     full_result['slope'].astype(float)
     full_result['intercept'].astype(float)
     
-    # return table
+    # return slopes and intercepts
     return full_result
     #end of function
 
-
-# load pickled model
-filename = 'finalized_model.sav'
-global model
-model = pickle.load(open(filename, 'rb'))
-
+# bokeh file
 output_file("prediction_ui.html")
 
-# the top of the page
+# test for paragraph at the top of the page. stored in HTML.
 description = Div(text=open(join(dirname(__file__), "description.html")).read(), width=800)
 
-## date things
-crnt_date=dt.now()
 
+''' --- Left side of page: Onset and demographic data --- '''
 ## Onset Panel
 # date onset
 def dt_date_onset_handler(attr, old, new):
@@ -152,8 +177,9 @@ sex = RadioButtonGroup(labels=["Female", "Male", "*Unk"], active=2)
 sex.on_click(sex_handler)
 
 
+''' --- right side of page: ALSFRS scores --- '''
 #### ALSFRS panels
-
+# dates of ALS scores
 dt_alsfrs_1=DatePicker(title='Date of Test 1: ', 
                        min_date=date(1990,1,1),
                        max_date=date.today(), 
@@ -189,8 +215,9 @@ dt_alsfrs_6=DatePicker(title='Date of Test 6: ',
                         max_date=date.today(), 
                        value=date.today(),
                        width=100)
-wdbox=140
 
+# test boxes for alsfrs questions
+wdbox=140
 Q1_1 = TextInput(value="3", title="Q1 Speech:", width=wdbox)
 Q1_2 = TextInput(value="3", title="Q1 Speech:", width=wdbox)
 Q1_3 = TextInput(value="2", title="Q1 Speech:", width=wdbox)
@@ -275,7 +302,7 @@ R3_4 = TextInput(value="", title="R3:", width=wdbox)
 R3_5 = TextInput(value="", title="R3:", width=wdbox)
 R3_6 = TextInput(value="", title="R3:", width=wdbox)
 
-# create dummys for tab layout
+# create dummys for spacing in tab layout
 dumbdiv1a = Div()
 dumbdiv2a = Div()
 dumbdiv3a = Div()
@@ -284,7 +311,7 @@ dumbdiv5a = Div()
 dumbdiv6a = Div()
 
 
-#### ALSFRS boxes
+#### arrange ALSFRS boxes in a 'tab'
 
 wd = 200
 l1a = row(widgetbox(Q1_1, Q2_1, Q3_1, Q4_1, width=wd), 
@@ -327,8 +354,7 @@ tab6 = Panel(child= l6, title="ALSFRS-6")
 tabs = Tabs(tabs=[ tab1, tab2, tab3, tab4, tab5, tab6], width = 800)
 
 
-
-''' --- Tables to update  --- '''
+''' --- DataFrames for updated scores  --- '''
 ### alsfrs tables
 
 # make df of input values
@@ -362,12 +388,15 @@ def create_alsfrs_data():
             return np.NaN
         else:
             return (val - dt_date_onset.value).days
-    alsfrs_df['day_from_onset'] = alsfrs_df['date'].apply(days_from_onset_func)
     
+    # apply date fucntion to alsfrs data
+    alsfrs_df['day_from_onset'] = alsfrs_df['date'].apply(days_from_onset_func)
     alsfrs_df.dropna(inplace=True)
     
-    # add the total row
+    # add a total row (combined score)
     col_list= list(alsfrs_df.columns)
+    
+    # clean up dataframe
     col_list.remove('day_from_onset')
     col_list.remove('date')
     col_list.remove('test')
@@ -377,19 +406,27 @@ def create_alsfrs_data():
     alsfrs_df['ALSFRS_Total'] = alsfrs_df[col_list].sum(axis=1).astype(float)
     
     return alsfrs_df
-
+    # end function
 
 # instaniate alsfrs table
 alsfrs_df = create_alsfrs_data()
 
-# for data table output
+# make a columndata source of the data table output for image updating
 alsfrs_source = ColumnDataSource(alsfrs_df)
 
 
 '''   --- Data for models ---   '''
 ### create model data
+
 ### load in baseline data on all modeling features or generic prediction
 def create_base_data():
+    '''
+    The base model data contains the average or most common values from the features
+    which were included in the model. This function oads the base model data file and 
+    creates a ColumnDataSource for use by bokeh methods.
+    This table will be updated with new data where present - therefore the model will
+    still provide a result without all data being present.
+    '''
     base = pd.read_csv("baseline_df.csv")
     global baseline_source
     baseline_source = ColumnDataSource(base)
@@ -400,6 +437,9 @@ base = create_base_data()
 
 # update the baseline model with new data
 def model_data_update(slope):
+    '''
+    Base data updated with form entries
+    '''
     global base
     base = create_base_data()
     
@@ -455,6 +495,14 @@ def model_data_update(slope):
 
 ## button to run prediction 
 def run_predict_button():
+    '''
+    When button is clicked:
+        1. runs the alsfrs slope function on new data
+        2. updates the model data with form data
+        3. runs prediction on the updated model data
+        4. updates the distribution graph
+    This button does not return anything
+    '''
     global prediction
     global pred_run
     global data_table
@@ -517,6 +565,9 @@ pp_data_table = Paragraph(text="""ALSFRS Data Table""", width=250, height=15)
 ### FIGURES
 
 def plotting_slope():
+    '''
+    this function not in operation. 
+    '''
     xxx = create_alsfrs_data()['day_from_onset'].values
     yyy = create_alsfrs_data()['ALSFRS_Total'].values
 
@@ -533,7 +584,12 @@ def plotting_slope():
 plotting_slope_df = plotting_slope()
 slope1_source = ColumnDataSource(plotting_slope_df)
 
+
 def ALSFRS_plot():
+    '''
+    output: image of linear regression line for alsfrs total score over 
+    repeated measures from alsfrs form
+    '''
     ALSFRS_plot = figure( plot_width=400, plot_height=400, title="ALSFRS Total Score")
     #gg= alsfrs_source
     plotting_slope()
@@ -556,6 +612,9 @@ def this_awesome_plot():
 
 # test figure
 def testplot1():
+    '''
+    This function not in operation. Example of a plot - for further exploration.
+    '''
     x = list(range(11))
     y0 = x
     y1 = [10 - i for i in x]
@@ -567,6 +626,10 @@ def testplot1():
     return p1
 
 def make_hist_plot(title, hist, edges, x, pdf):
+    '''
+    plots the distribution of death days from onset from teh training data 
+    with a red line indicating predicted day of death from the user inputed data.
+    '''
     p = figure(title=title, tools='', plot_width=400, plot_height=400, x_range=(-50, 3500))
     p.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:],
            fill_color="#1C2833", line_color="white", alpha=0.6)
@@ -589,6 +652,10 @@ def make_hist_plot(title, hist, edges, x, pdf):
 
 # Death Distribution
 def death_dist():
+    ''' 
+    loads distribution data for plot of day of death
+    sets distribution values
+    '''
     died_days = pd.read_csv("death_days.csv")
     mu = 958
     sigma = 442
@@ -599,9 +666,7 @@ def death_dist():
     return make_hist_plot("Day of Death Distribution", hist, edges, x, pdf)
 
 
-
-
-''' ---  Display in bokeh server  --- '''
+''' ---  Output Display in bokeh server  --- '''
 
 grid=gridplot([[ALSFRS_plot(), death_dist()], [None, None ]])
     
