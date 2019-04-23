@@ -1,4 +1,6 @@
 # prevent data from appearing in public folder.
 /clean_data
 /clean_lab
-/data
+/dataclean_data
+clean_lab
+data
