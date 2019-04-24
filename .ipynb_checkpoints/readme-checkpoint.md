@@ -97,17 +97,29 @@ Death, the target variable, was present for only those subjects whom died during
 
 ### Demographic Features
 
-The dataset contained subject demographic data including age, sex, weight, and race. Also present was the subject's family history of ALS. All of these features were one-hot encoded (if needed) and evalutated during modeling.
-
+The dataset contained subject demographic data including age, sex, weight, and race. Also present was the subject's family history of ALS. All of these features were one-hot encoded (if needed) and evaluated during modeling.
 
 
 ## Workflow
 Numerous permutations of features and modeling algorithms were evaluated using cross-validation and hyperparameter tuning. 
 
+![workflow](https://github.com/ttompk/als/blob/master/images/workflow.png)  
+
 Models evaluated: linear regression, random forest regression, gradient boosting regression
 
+The random forest regression model performed the best after cross-validation and/or hyperparameter tuning. 
+
+### Model Performance
+
+Model performance was evaluated using residual plots, $R^2$, mean absolute error, and median absolute percentage error.
+
+The model had the following prediction metrics:
+- Mean Absolute Error: **151 days**
+- Median Absolute Percentage Error:  **12%** (Q10: 2.5%, Q90: 34%)  
+![predict_plot](https://github.com/ttompk/als/blob/master/images/pred_plot.png)
+![resid_plot]()
 
 ## Surpises
 
-Approximatly 90% of ALS subjects ultimatly die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival. Literature from research studies appear to support this finding. Hopefully, a better respiratory test can be developed to test respiration forces in ALS subjects which does not involve the confounding confounding factor of subject volition.
+Approximatly 90% of ALS subjects ultimatly die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival. Literature from research studies appear to support this finding. Hopefully, a better test can be utilized to measure respiration forces in ALS subjects which does not involve the confounding factor of subject volition.
 
