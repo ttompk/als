@@ -118,7 +118,7 @@ Plot of predicted length of survival (days) vs actual length of survival (days)
 
 The final model had the following test prediction error:
 - Mean Absolute Error: **151 days**
-- Median Absolute Percentage Error (MAPE):  **12%**   
+- Median Absolute Percentage Error (MAPE):  **12%**  (10th Quart: 2.5%, 90th Quart: 34%).
 
 #### Comparison to Other Models
 As a comparison, if one predicted that all subjects survived exactly as long as the mean value, 956 days, the mean absolute error would be 308 days with a MAPE of 26.7%. [Knibb *et al*](https://jnnp.bmj.com/content/jnnp/87/12/1361.full.pdf) suggest that bulbar symptoms at disease onset is linked to reduced survival times. A model was fit with only subject's with bulbar symsptoms at onset. This model had a mean absolute error of 233 days and MAPE of 24.4%. 
@@ -133,14 +133,15 @@ Distribution of residuals:
 ![resid_dist](https://github.com/ttompk/als/blob/master/images/resid_dist.png)
  
 
-## Takehome
-The model provided here can predict length of survival with an absolute error of approximately 6 months. 
+## Conclusion
 
-Despite this shortcoming, the tool remains a practical choice for evaluating subjects for clinical trial participation. The lack of prediction strength years after onset is not as critical to subject selection when the objective is to determine candidates who meet a defined exclusion criteria, e.g. exclude subjects whose decline in function is too severe or alternatively whose decline is minimal. Both scenarios can be problematic for statistical analysis.
-
+The model provided here can predict length of survival with an error of approximately 6 months. The model more accurately predicts shorter lifespans than longer, ie. fast progressors vs. slower progressors.
 
 
-## Surpises
+
+Despite this shortcoming, the tool remains a practical choice for evaluating subjects for clinical trial participation. The lack of prediction strength years after onset is not as critical to subject selection when the objective is to determine candidates who meet a defined exclusion criteria, e.g. exclude subjects whose decline in function is too severe or alternatively whose decline is minimal. Both scenarios can be problematic for statistical analyses.
+
+### Surpises
 
 Approximatly 90% of ALS subjects ultimatly die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival. Literature from research studies appear to support this finding. Hopefully, a better test can be utilized to measure respiration forces in ALS subjects which does not involve the confounding factor of subject volition.
 
