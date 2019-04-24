@@ -121,16 +121,14 @@ The final model had the following test prediction error:
 - Median Absolute Percentage Error (MAPE):  **12%**  (10th Quart: 2.5%, 90th Quart: 34%).
 
 #### Comparison to Other Models
-As a comparison, if one predicted that all subjects survived exactly as long as the mean value, 956 days, the mean absolute error would be 308 days with a MAPE of 26.7%. [Knibb *et al*](https://jnnp.bmj.com/content/jnnp/87/12/1361.full.pdf) suggest that bulbar symptoms at disease onset is linked to reduced survival times. Even though the neuron group affected at onset is a feature in the model, the data was modeled using only subjects with bulbar neral group involvement at onset. This model performed better than the 'mean' only model but not as well as the final model. The bulbar-group model had a mean absolute error of 233 days and MAPE of 24.4%. 
+As a comparison, if one predicted that all subjects survived exactly as long as the mean value, 956 days, the mean absolute error would be 308 days with a MAPE of 26.7%. [Knibb *et al*](https://jnnp.bmj.com/content/jnnp/87/12/1361.full.pdf) suggest that bulbar symptoms at disease onset is linked to reduced survival times. Even though the neuron group affected at onset is a feature in the model, the data was modeled using only subjects with bulbar neural group involvement at onset. This model performed better than the 'mean' only model but not as well as the final model. The bulbar-group model had a mean absolute error of 233 days and MAPE of 24.4%. 
 
 ### Residuals
-Plot of prediction residuals:
-![resid_plot](https://github.com/ttompk/als/blob/master/images/resids.png)
+Plot of prediction residuals:![resid_plot](https://github.com/ttompk/als/blob/master/images/resids.png)
 
 As can be seen from the plot of residuals above, the prediction response did not have a continous varaiance across time, i.e. the response was heteroscedastic. This implies that the prediction error is greater the further away from onset a subject is predicted to live. This error is understandable given that the most important features are the slopes of the ALSFRS scores. This implies that the model is more accurate in detecting how long subjects will live among subjects with more negative slopes (those declining in function more rapidly) and less accurate at predicting those that live longer. As expected, small variations in slope among the longer lived subjects had a greater impact on the model's prediction error. 
 
-Distribution of residuals:
-![resid_dist](https://github.com/ttompk/als/blob/master/images/resid_dist.png)
+Distribution of residuals:![resid_dist](https://github.com/ttompk/als/blob/master/images/resid_dist.png)
  
 
 ## Conclusion
@@ -141,5 +139,5 @@ The model more accurately predicts shorter lifespans than longer, ie. fast progr
 
 ### Surpises
 
-Approximately 90% of ALS subjects ultimately die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival and where not included in the final model. Literature from research studies appear to contrast with these findings [Mousavi *et al.*](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4240929/), . Hopefully, a better test can be utilized to measure respiration forces in ALS subjects which does not involve the confounding factor of subject volition.
+Approximately 90% of ALS subjects ultimately die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival and where not included in the final model. Literature from research studies appear to contrast with these findings, [Mousavi *et al.*](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4240929/), [Schmidt *et al.*](https://onlinelibrary.wiley.com/doi/pdf/10.1002/mus.20450), [Wolf *et al.*](https://bmcneurol.biomedcentral.com/articles/10.1186/s12883-014-0197-9). These papers report grouping subjects by setting a threshold for pulmonary function, e.g. below 75% of percent normalized function. This is a good idea for further work. Additionaly, FVC measurements were taken across multiple studies which can introduce a source of variation in addition to a test which presumably has greater variation than some biochemical tests as the to FVC tests requires subject volition to measure respiration forces.
 
