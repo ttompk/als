@@ -117,7 +117,8 @@ The model had the following prediction metrics:
 - Mean Absolute Error: **151 days**
 - Median Absolute Percentage Error:  **12%** (Q10: 2.5%, Q90: 34%)  
 ![predict_plot](https://github.com/ttompk/als/blob/master/images/pred_plot.png)
-![resid_plot]()
+![resid_plot](https://github.com/ttompk/als/blob/master/images/resids.png)
+![resid_dist](https://github.com/ttompk/als/blob/master/images/resid_dist.png)
 
 ## Surpises
 
