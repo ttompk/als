@@ -9,7 +9,7 @@ Using machine learning, several predictive models were built to determine the le
 ![website_demo](https://github.com/ttompk/als/blob/master/images/als_website_demo.gif)
 
 
-### ALS
+### What is ALS
 
 ![als_man](https://github.com/ttompk/als/blob/master/images/als_man.png)  
 
@@ -121,7 +121,7 @@ The final model had the following test prediction error:
 - Median Absolute Percentage Error (MAPE):  **12%**  (10th Quart: 2.5%, 90th Quart: 34%).
 
 #### Comparison to Other Models
-As a comparison, if one predicted that all subjects survived exactly as long as the mean value, 956 days, the mean absolute error would be 308 days with a MAPE of 26.7%. [Knibb *et al*](https://jnnp.bmj.com/content/jnnp/87/12/1361.full.pdf) suggest that bulbar symptoms at disease onset is linked to reduced survival times. A model was fit with only subject's with bulbar symsptoms at onset. This model had a mean absolute error of 233 days and MAPE of 24.4%. 
+As a comparison, if one predicted that all subjects survived exactly as long as the mean value, 956 days, the mean absolute error would be 308 days with a MAPE of 26.7%. [Knibb *et al*](https://jnnp.bmj.com/content/jnnp/87/12/1361.full.pdf) suggest that bulbar symptoms at disease onset is linked to reduced survival times. Even though the neuron group affected at onset is a feature in the model, the data was modeled using only subjects with bulbar neral group involvement at onset. This model performed better than the 'mean' only model but not as well as the final model. The bulbar-group model had a mean absolute error of 233 days and MAPE of 24.4%. 
 
 ### Residuals
 Plot of prediction residuals:
@@ -135,13 +135,11 @@ Distribution of residuals:
 
 ## Conclusion
 
-The model provided here can predict length of survival with an error of approximately 6 months. The model more accurately predicts shorter lifespans than longer, ie. fast progressors vs. slower progressors.
+The model provided here can predict length of survival in ALS with an error of approximately 6 months. The model out performs or is comparable to [pubished reports](https://jnnp.bmj.com/content/jnnp/87/12/1361.full.pdf). Importantly, the model presented here relies primarily on ongoing functional assessments for its predictive strength, whereas other survival models attempt to infer survival at the time of onset. Not exactly an apples to apples comparison. 
 
-
-
-Despite this shortcoming, the tool remains a practical choice for evaluating subjects for clinical trial participation. The lack of prediction strength years after onset is not as critical to subject selection when the objective is to determine candidates who meet a defined exclusion criteria, e.g. exclude subjects whose decline in function is too severe or alternatively whose decline is minimal. Both scenarios can be problematic for statistical analyses.
+The model more accurately predicts shorter lifespans than longer, ie. fast progressors vs. slower progressors. Despite this shortcoming, the tool remains a practical choice for evaluating subjects for clinical trial participation. The lack of prediction strength years after onset is not as critical to subject selection when the objective is to determine candidates who meet a defined exclusion criteria, e.g. exclude subjects whose decline in function is too severe or alternatively whose decline is minimal. Both scenarios can be problematic for statistical analyses.
 
 ### Surpises
 
-Approximatly 90% of ALS subjects ultimatly die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival. Literature from research studies appear to support this finding. Hopefully, a better test can be utilized to measure respiration forces in ALS subjects which does not involve the confounding factor of subject volition.
+Approximately 90% of ALS subjects ultimately die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival and where not included in the final model. Literature from research studies appear to contrast with these findings [Mousavi *et al.*](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4240929/), . Hopefully, a better test can be utilized to measure respiration forces in ALS subjects which does not involve the confounding factor of subject volition.
 
