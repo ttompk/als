@@ -111,15 +111,24 @@ The random forest regression model performed the best after cross-validation and
 
 ### Model Performance
 
-Model performance was evaluated using residual plots, $$R^2$$, mean absolute error, and median absolute percentage error.
+Model performance was evaluated using residual plots, R<sup>2</sup>, mean absolute error, and median absolute percentage error.
 
-![predict_plot](https://github.com/ttompk/als/blob/master/images/pred_plot.png "Actual vs Predicted")
+Plot of predicted length of survival (days) vs actual length of survival (days)
+![predict_plot](https://github.com/ttompk/als/blob/master/images/pred_plot.png)
 
-The model had the following prediction metrics:
+The final model had the following test prediction error:
 - Mean Absolute Error: **151 days**
-- Median Absolute Percentage Error:  **12%** (Q10: 2.5%, Q90: 34%)  
+- Median Absolute Percentage Error (MAPE):  **12%** (Q10: 2.5%, Q90: 34%)  
 
+#### Comparison to Other Models
+As a comparison, if one predicted that all subjects survived exactly as long as the mean value, 956 days, the mean absolute error would be 308 days with a MAPE of 26.7%. [Knibb *et al*](https://jnnp.bmj.com/content/jnnp/87/12/1361.full.pdf) suggest that bulbar symptoms at disease onset is linked to reduced survival times. A model was fit with only subject's with bulbar symsptoms at onset. This model had a mean absolute error of 233 days and MAPE of 24.4%. 
+
+Plot of prediction residuals
 ![resid_plot](https://github.com/ttompk/als/blob/master/images/resids.png)
+
+As can be seen from the plot of residuals above, the prediction response did not have a continous varaiance across time, i.e. the response was heteroscedastic. This implies that the prediction error is greater the further away from onset a subject is predicted to live. This error is understandable given that the most important features are the slopes of the ALSFRS scores. This implies that the model is more accurate in detecting how long subjects will live among subjects with more negative slopes (those declining in function more rapidly) and less accurate at predicting those that live longer. As expected, small variations in slope among the longer lived subjects had a greater impact on the model's prediction error. 
+
+Despite the error Despite this shortcoming, the tool remains a practical choice for evaluating subjects for clinical trial participation, the lack of prediction strength years after onset 
 ![resid_dist](https://github.com/ttompk/als/blob/master/images/resid_dist.png)
 
 ## Surpises
