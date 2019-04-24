@@ -6,6 +6,9 @@ Amyotrophic Lateral Sclerosis - aka ALS, Lou Gehrig’s Disease, Motor Neuron Di
 
 Using machine learning, several predictive models were built to determine the length of time from onset of disease until death in ALS subjects. The final model was a random forest regression alogorithm that can predict the day of death with an abolute error of 151 days, an R-squared of 0.73, and median absolute percentage error of 12%. The model takes in information about the onset of disease, demographic data, and repeated functional assessment scores taken since onset. An interactive html tool was built to allow clinical teams to enter a subject's ALS data and retrieve a prediction.
 
+![website_demo](https://github.com/ttompk/als/blob/master/images/als_website_demo.gif)
+
+
 ### ALS
 
 ![als_man](https://github.com/ttompk/als/blob/master/images/als_man.png)  
@@ -98,12 +101,10 @@ The dataset contained subject demographic data including age, sex, weight, and r
 
 
 
-## The model
+## Workflow
 Numerous permutations of features and modeling algorithms were evaluated using cross-validation and hyperparameter tuning. 
 
-Models evaluated: 
-
-
+Models evaluated: linear regression, random forest regression, gradient boosting regression
 
 
 ## Surpises
