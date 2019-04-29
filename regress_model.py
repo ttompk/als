@@ -1,4 +1,6 @@
 # regress_model.py
+# ALS project
+# class for performing regression analysis. built on sklearn. 
 
 from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
