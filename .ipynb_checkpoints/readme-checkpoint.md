@@ -4,7 +4,7 @@ Amyotrophic Lateral Sclerosis - aka ALS, Lou Gehrig’s Disease, Motor Neuron Di
 
 ## Project Overview  
 
-Using machine learning, several predictive models were built to determine the length of time from onset of disease until death in ALS subjects. The final model was a random forest regression alogorithm that can predict the day of death with an abolute error of 151 days, an R-squared of 0.73, and median absolute percentage error of 12%. The model takes in information about the onset of disease, demographic data, and repeated functional assessment scores taken since onset. An interactive html tool was built to allow clinical teams to enter a subject's ALS data and retrieve a prediction.
+Using machine learning, a predictive model was built to determine the length of time from onset of disease until death in ALS subjects. The prediction tool was designed to aid in subject selection for ALS clinical trials. Model features include symptoms and neuron set affected at onset of disease, subject demographic data, and ALS functional assessment scores. The final model utilized a random forest regression alogorithm to predict the day of death with an abolute error of 151 days, an R-squared of 0.73, and median absolute percentage error of 12%.  An interactive html tool was built to allow clinical teams to enter a subject's ALS data and retrieve a prediction.
 
 ![website_demo](https://github.com/ttompk/als/blob/master/images/als_website_demo.gif)
 
@@ -30,7 +30,7 @@ All data was provided with permission by the PRO-ACT ALS organization.
 
 Data for this project included information from over 10,000 clinical trials subjects who participated in over 20 clincial trials. The dataset included both treated and placebo subjects, however no information on the drug, e.g. name, dose, route of administration, was provided. Importantly, all trials in the dataset failed to show a significant difference between treatment and placebo groups.
 
-Despite the large number of large subjects few had data across all features and thus the overall number of subjects available for modeling was significantly more limited.
+Despite the large number of subjects few had data across all features and thus the overall number of subjects available for modeling was significantly more limited.
 
 See this document for more information on the data collection and curation. [Data Dictionary](https://nctu.partners.org/ProACT/Document/DisplayLatest/2)
 
@@ -39,7 +39,7 @@ See this document for more information on the data collection and curation. [Dat
 
 The dataset contained multiple features, including: laboratory data, forced vital capcity (FVC), slow vital capcity (SVC), ALSFRS scores (functional assessments), demographic data (age, sex, weight, etc), symptoms at onset, family history, and others. These values were either subject level, one value per subject (e.g. symptoms, demographic), or repeated measures (e.g. ALSFRS, FVC, labs). 
 
-As expected in a study spaning multiple studies, not all assessments were performed in every study and studies with similar assessments did not always perform testing on the same schedule. 
+As expected in a study spaning multiple studies, not all assessments were performed in every study and studies with similar assessments did not always perform testing on the same schedule. Therefore several strategies were evaluated to enable data from repeated measures to be incorporated into the model.
 
 The model utilizes the following features:
 
@@ -67,19 +67,21 @@ Measures:
 - Q7: turning in bed and adjusting bed clothes
 - Q8: walking
 - Q9: climbing stairs
-- Q10: respiratory (replaced with revised scale R1: , R2: , R3: )
+- Q10: respiratory (replaced with revised scale R1: dyspnea, R2: orthopnea, R3: respiratory insufficiency)
 
 Scores from individual questions are summed to create a 'Total' score ranging from 40, maximal ordinary function, to 0, no function at all. 
 
 Some subjects had a revised functional assessment score. The revised scale replaced question 10, respiratory, with three additional questions. To maximize the number of subjects in the analysis, the first of the three revised scores, R1, was used to represent Q10 from the unrevised scale, thereby maintaining a total score of 40.
 
-These data where collected over several time points. To use the ALSFRS scores in a model, the repeated measures had to be distilled to one value (or 2 in case of a ploynomial fit) for each subject. This value would then be used in the model to predict survival. As suggested by (Karanevich et al)[https://www.ncbi.nlm.nih.gov/pubmed/29409450] an additional maximal score of 4 for each question (40 total) was added for each subject at the time of disease onset. An assumption was made that each subject was completely functional prior to disease symptoms.
+These data where collected over several time points. To use the ALSFRS scores in the model, the repeated measures had to be distilled to one value (or 2 in case of a polynomial fit) for each subject. This value would then be used in the model to predict survival. 
+
+To detect rate of decreasing function, a linear regression line was fitted to each subject's indivual ALSFRS responses and the combined score. As suggested by [Karanevich et al](https://www.ncbi.nlm.nih.gov/pubmed/29409450) an additional maximal score of 4 for each question (40 points total) was added for each subject at the time of disease onset. The onset-anchored point was critical to stabilizing the slope of the linear model (increased bias, decreased variance) for each subject. An assumption was made that each subject was completely functional prior to disease symptoms.
 
 ![pre_mod_alsfrs](https://github.com/ttompk/als/blob/master/images/alsfrs_start.png)
 
 ![post_mod_alsfrs](https://github.com/ttompk/als/blob/master/images/alsfrs_onset_slope.png)
 
-To detect rate of decreasing function, a linear regression line was fitted to each subject's indivual ALSFRS responses and the combined score. The onset-anchored point was critical to stabilizing the slope of the linear model for each subject. Additional fits using multi-degree polynomials were also fit using the first and second derivatives as features in the model. These polynomial fits generally provided worse fitting and were excluded from the final set of features.
+Additional fits using multi-degree polynomials were also fit using the first and second derivatives as features in the model. These polynomial fits generally provided worse fitting and were excluded from the final set of features.
 
 ### Forced Vital Capacity (FVC) and Slow Vital Capatcity (SVC)
 
@@ -139,5 +141,5 @@ The model more accurately predicts shorter lifespans than longer, ie. fast progr
 
 ### Surpises
 
-Approximately 90% of ALS subjects ultimately die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival and where not included in the final model. Literature from research studies appear to contrast with these findings, [Mousavi *et al.*](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4240929/), [Schmidt *et al.*](https://onlinelibrary.wiley.com/doi/pdf/10.1002/mus.20450), [Wolf *et al.*](https://bmcneurol.biomedcentral.com/articles/10.1186/s12883-014-0197-9). These papers report grouping subjects by setting a threshold for pulmonary function, e.g. below 75% of percent normalized function. This is a good idea for further work. Additionaly, FVC measurements were taken across multiple studies which can introduce a source of variation in addition to a test which presumably has greater variation than some biochemical tests as the to FVC tests requires subject volition to measure respiration forces.
+Approximately 90% of ALS subjects ultimately die from respiratory failure. Interestingly, respiratory functional test data (FVC and SVC) were not predictors of length of survival and where not included in the final model. Literature from research studies appear to contrast with these findings, [Mousavi *et al.*](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4240929/), [Schmidt *et al.*](https://onlinelibrary.wiley.com/doi/pdf/10.1002/mus.20450), [Wolf *et al.*](https://bmcneurol.biomedcentral.com/articles/10.1186/s12883-014-0197-9). These papers report grouping subjects by setting a threshold for pulmonary function, e.g. below 75% of percent normalized function. This is a good idea for further work. Additionaly, FVC measurements were taken across multiple studies which potentially introduced a source of variation. Presumably FVC measurements and neuromuscular function do not always correlate because the test requires subject volition to measure respiration forces. A less subjective measurement may enhance the predictive power of respiration forces in predicting length of survival.
 
