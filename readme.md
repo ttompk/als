@@ -15,7 +15,7 @@ Using machine learning, a predictive model was built to determine the length of 
 
 Amyotrophic lateral sclerosis (ALS), also known as motor neurone disease (MND) or Lou Gehrig's disease, is a fatal disease affecting the motor neurons of the brain and spinal cord.  Motor neurons are responsible for controling body movements including walking, talking, eating, and breathing. Progressive degeneration of the motor neurons in ALS eventually leads to neural necrosis. When the motor neurons die, the ability of the brain to initiate and control muscle movement is permanently lost.  
 
-ALS is a terminal, progressive disease. Each year approximately 5,600 American's are diagnosed with ALS. Currently, there is **NO CURE FOR ALS**.
+ALS is a terminal, progressive disease. Each year approximately 5,600 Americans are diagnosed with ALS. Currently, there is **NO CURE FOR ALS**.
         
 This project sought to predict the length of survival of ALS subjects. Death from onset of disease is rapid but also heterogeneous, with 50% dying within three years of symptom onset, 75% within the first five years, and 90% within 10 years. Most ALS subjects die as a result of respiratory failure. 
 
@@ -75,7 +75,7 @@ Some subjects had a revised functional assessment score. The revised scale repla
 
 These data where collected over several time points. To use the ALSFRS scores in the model, the repeated measures had to be distilled to one value (or 2 in case of a polynomial fit) for each subject. This value would then be used in the model to predict survival. 
 
-To detect rate of decreasing function, a linear regression line was fitted to each subject's indivual ALSFRS responses and the combined score. As suggested by [Karanevich et al](https://www.ncbi.nlm.nih.gov/pubmed/29409450) an additional maximal score of 4 for each question (40 points total) was added for each subject at the time of disease onset. The onset-anchored point was critical to stabilizing the slope of the linear model (increased bias, decreased variance) for each subject. An assumption was made that each subject was completely functional prior to disease symptoms.
+To detect rate of decreasing function, a linear regression line was fitted to each subject's indivual ALSFRS responses and the total combined score. As suggested by [Karanevich et al](https://www.ncbi.nlm.nih.gov/pubmed/29409450) an additional maximal score of 4 for each question (40 points total) was added for each subject at the time of disease onset. The onset-anchored point was critical to stabilizing the slope of the linear model (increased bias, decreased variance) for each subject. An assumption was made that each subject was completely functional prior to disease symptoms.
 
 ![pre_mod_alsfrs](https://github.com/ttompk/als/blob/master/images/alsfrs_start.png)
 
