@@ -2,13 +2,27 @@
 # support functions for ALS prediction model
 # 
 # library dependencies
-from sklearn.metrics import confusion_matrix
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, roc_curve, auc, f1_score
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier 
+from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
 import rfpimp
 
 
 def plot_model_parallel(y_test, y_predicted, units='units'):
     '''
-    parallel plot of actual and predicted values. A line connects each value pair.
+    parallel plot of actual and predicted values. A line connects each value pair. Default color is green.
+    dependencies: 
+        import pandas as pd
+        import matplotlib.pyplot as plt
+    inputs:
+        y_test = array. actual target values
+        y_predicted = array. predicted target values
+        units = string. description of the y-axis variable units
+    output: a single labeled plot
+    returns: None
     '''
     data = pd.DataFrame(y_test.values, columns=["test"])
     data['predicted']=y_predicted
@@ -23,6 +37,14 @@ def plot_model_parallel(y_test, y_predicted, units='units'):
 def plot_predicted_regression(predicted, actual, suptitle='Regression', title=""):
     '''
     scatter plot of actual vs predicted. Note x and y limits.
+    dependencies: import matplotlib.pyplot as plt
+    input: 
+        predicted = numpy array. X-axis values.  
+        actual = numpy array. y-axis values.
+        supttitle = string. description for subtitle of plot
+        title = string. description for title of plot
+    output: a single labeled plot
+    returns: None
     '''
     plt.plot(predicted, actual, '*')
     plt.suptitle(suptitle, fontsize=18)
@@ -38,6 +60,15 @@ def plot_predicted_regression(predicted, actual, suptitle='Regression', title=""
 def plot_roc(model, X_test, y_test, model_type='forest', target='Target'):
     '''
     plot a ROC curve for a model or lists of models
+    dependencies: from sklearn.metrics import roc_curve, auc
+    input:
+        model = = an instantiated/trained sklearn model
+        X_test = numpy array. the model features (does not include target)
+        y_test = numpy array. the target variable
+        model_type = string. description of the model for the plot's title
+        target = string. description of the target variable for plot subtitle
+    output: a single labeled plot
+    returns: None
     '''
     # note: kNN does not plot an roc curve using a decision function...not 
     model_list = [1]
@@ -79,6 +110,7 @@ def plot_roc(model, X_test, y_test, model_type='forest', target='Target'):
     plt.suptitle(target)
     plt.legend(loc="lower right")
     plt.show()
+ #end function
 
     
 def confusion_table(model, X_test, y_test):
@@ -251,7 +283,14 @@ def run_rf(df, features, class_regress, target, limit_on=None, exclude_columns=N
 
 def run_gboost(df, features, class_regress, target, limit_on, exclude_columns=None, params=None):
     '''
-    run a gboost model - classifier or regressor
+    takes in a pandas df, trains a gboost model - classifier or regressor, makes predictions,
+    produces plots, returns residuals
+    dependencies: 
+        from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
+        from sklearn.model_selection import train_test_split, cross_val_score
+        from sklearn.metrics import f1_score
+        # this file:    confusion_table(), plot_roc(), plot_predicted_regression(), 
+                        plot_model_parallel(), feature_import()
     input:
         df = df
         features = list of strings. list of features to include in model (should contain the target)
@@ -299,7 +338,7 @@ def run_gboost(df, features, class_regress, target, limit_on, exclude_columns=No
     ### Fit model
     if class_regress == 'classifier':
         # run classiffier RF model
-        model = RandomForestClassifier(n_estimators=10)
+        model = GradientBoostingClassifier(n_estimators=10)
         model.fit(X_train,y_train)
     else:
         model = GradientBoostingRegressor(**params)
@@ -367,13 +406,13 @@ def run_gboost(df, features, class_regress, target, limit_on, exclude_columns=No
     
 def run_cv_gboost(df, features, class_regress, target, limit_on, exclude_columns, param_grid):
     '''
-    takes in a pandas df, performs grid search CV on  Gradianet boosting regressor, returns
+    takes in a pandas df, performs grid search CV on Gradient boosting regressor, returns
     best parameters.
     dependency: 
         from sklearn.model_selection import train_test_split, GridSearchCV
         from sklearn.ensemble import GradientBoostingRegressor
         from sklearn.metrics import f1_score
-        # this file:    confusion_table(), plot_roc(), plot_predicted_regression(), 
+        # within this file:    confusion_table(), plot_roc(), plot_predicted_regression(), 
                         plot_model_parallel(), feature_import()
     input:
         df = df
@@ -386,7 +425,6 @@ def run_cv_gboost(df, features, class_regress, target, limit_on, exclude_columns
     output:  none
     returns: best parameters of grid search
     '''
-    
     ### prepare input
     model_data = df[features].copy()
     model_data.dropna(inplace=True)
