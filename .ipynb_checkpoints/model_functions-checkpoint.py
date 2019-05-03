@@ -459,3 +459,85 @@ def run_cv_gboost(df, features, class_regress, target, limit_on, exclude_columns
     print(grid.best_params_)
 #end function
 
+
+def lm_eval(residuals_df, col_actual, col_predictions):
+    '''
+    model evaluation metrics and residual plots
+    input: 
+        residuals_df -  dataframe. contains at least test and prediction values
+        col_actual -  string. column name of test values
+        col_predictions -  string. column name of prediction values
+    '''
+    residual_df = residuals_df.copy()
+    residual_df['residual'] = residual_df[col_actual] - residual_df[col_predictions]
+    
+    #evaluate the model
+    mabs = round(mean_abs_error(residual_df, 'residual'),0)
+    accur = model_accuracy(residual_df, col_actual, 'residual')
+    mse = round(model_mse(residual_df, col_actual, 'residual'), 2)
+    
+    # output scores
+    print("Mean absolute error: {} days".format(mabs))
+    print("Accuracy: {} %".format(accur))
+    print("MSE: {}".format(mse))
+    print("RMSE: {}".format(round(np.sqrt(mse),2)))
+    
+    # plot histogram residuals
+    sns.distplot(residual_df['residual'], bins=30)
+    #plt.hist(residual_df['residual'], bins=30, ec="white")
+    plt.xlabel("days", fontsize=18)
+    plt.show()
+    
+    # plot residuals
+    resid_plot(residual_df[col_predictions], residual_df['residual'])
+    return 
+#end function
+
+
+def mean_abs_error(df, col_residuals):
+    '''
+    return mean absolute error
+    '''
+    return np.abs(df[col_residuals]).mean()
+
+
+def model_accuracy(df, col_actual, col_residuals):
+    '''
+    returns mean absolute percent error
+    '''
+    ape = 100 * (np.abs(df[col_residuals])/df[col_actual])
+    return round(100-np.mean(ape),2)
+
+
+def model_mse(df, col_actual, col_predicted):
+    '''
+    return mean squared error
+    '''
+    mse = sum((df[col_actual]-df[col_predicted])**2)/len(df)
+    return mse
+
+
+def median_abs_error(df, col_actual, col_residuals):
+    '''
+    returns median absolute percent error
+    '''
+    mape = 100 * np.median(np.abs(df[col_residuals]/df[col_actual]))
+    return mape
+
+
+def q10_abs_error(df, col_actual, col_residuals):
+    '''
+    returns absolute percent error for 10th quantile
+    '''
+    q10_ape = 100 * np.quantile(np.abs(df[col_residuals]/df[col_actual]), 0.1)
+    return q10_ape
+
+
+def q90_abs_error(df, col_actual, col_residuals):
+    '''
+    returns absolute percent error for 90th quantile
+    '''
+    q90_ape = 100 * np.quantile(np.abs(df[col_residuals]/df[col_actual]), 0.9)
+    return q90_ape
+
+
