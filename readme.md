@@ -75,7 +75,7 @@ Some subjects had a revised functional assessment score. The revised scale repla
 
 These data where collected over several time points. To use the ALSFRS scores in the model, the repeated measures had to be distilled to one value (or 2 in case of a polynomial fit) for each subject. This value would then be used in the model to predict survival. 
 
-To detect rate of decreasing function, a linear regression line was fitted to each subject's indivual ALSFRS responses and the total combined score. As suggested by [Karanevich et al](https://www.ncbi.nlm.nih.gov/pubmed/29409450) an additional maximal score of 4 for each question (40 points total) was added for each subject at the time of disease onset. The onset-anchored point was critical to stabilizing the slope of the linear model (increased bias, decreased variance) for each subject. An assumption was made that each subject was completely functional prior to disease symptoms.
+To detect rate of decreasing function, a linear regression line was fitted to each subject's indivual ALSFRS responses and the total combined score. As suggested by [Karanevich *et al*](https://www.ncbi.nlm.nih.gov/pubmed/29409450), an additional maximal score of 4 for each question (40 points total) was added for each subject at the time of disease onset. This onset-anchored point was critical to stabilizing the slope of the linear model for each subject. Usage of this point required the assumption that each subject was completely functional in all areas prior to disease symptoms.
 
 ![pre_mod_alsfrs](https://github.com/ttompk/als/blob/master/images/alsfrs_start.png)
 
@@ -89,7 +89,7 @@ A similar approach to ALSFRS scores, with or without onset-anchoring, was perfor
 
 ### Diease Onset Location
 
-ALS can affect different neuron groups at the onset of disease. Generally, the location of neuronal involvement at onset is mapped to neuron clusters in either the bulbar or spinal regions. Bulbar neurons are located in the head region and control such movements as speech and swallowing. The spinal region nerons control the distal limbs. There was evidence in the literature that bulbar involvelment at onset was associated with worsening disease. [reference] Indeed there was some signal suggesting this but its impact in predicting survival in the model presented here was negligible.
+ALS can affect different neuron groups at the onset of disease. Generally, the location of neuronal involvement at onset is mapped to neuron clusters in either the bulbar or spinal regions. Bulbar neurons are located in the head region and control such movements as speech and swallowing. The spinal region nerons control the distal limbs. There was evidence in the literature, [Knibb *et al*](https://jnnp.bmj.com/content/jnnp/87/12/1361.full.pdf), that bulbar involvement at onset was associated with worsening disease. Indeed there was some signal suggesting this but its impact in predicting survival in the model presented here was negligible compared to the importance of the ALSFRS scores.
 
 The location data in the original dataset included many misspelled, abbreviated, paraphrased, and truncated word forms. After cleaning and mapping, the values were one-hot encoded into several categories and evaluated in the model.
 
